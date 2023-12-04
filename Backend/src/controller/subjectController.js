@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const subjectService = require('../services/subjectService')
+const {createShema,updateShema} = require('../schemas/subjectShema')
 
 const getSubjects= async (req, res) => {
     try {
@@ -12,12 +13,7 @@ const getSubjects= async (req, res) => {
 
 const createSubject = async (req, res) => {
     try {
-        const schema = Joi.object({
-            name: Joi.string().required(),
-            teacher: Joi.string().required(),
-        });
-
-        const { error } = schema.validate(req.body);
+        const { error } = createShema.validate(req.body);
         if (error) {
             return res.status(400).json({ error: error.details[0].message });
         }
@@ -36,13 +32,7 @@ const createSubject = async (req, res) => {
 
 const updateSubject = async (req, res) => {
     try {
-        const schema = Joi.object({
-            id: Joi.required(),
-            name: Joi.string().required(),
-            teacher: Joi.string().required()
-        });
-
-        const { error } = schema.validate(req.body);
+        const { error } = updateShema.validate(req.body);
         if (error) {
             return res.status(400).json({ error: error.details[0].message });
         }

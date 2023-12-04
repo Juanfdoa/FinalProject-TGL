@@ -7,9 +7,9 @@ function isAutheticated(req, res, next) {
         return res.status(401).json({ error: 'Unauthorized: Token is missing' });
     }
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, payload) => {
+    jwt.verify(token.split(' ')[1], process.env.JWT_SECRET, (err, payload) => {
         if (err) {
-            console.error(err);
+            console.error('Error verifying token:', err);
             return res.status(403).json({ error: 'Forbidden: Invalid token' });
         }
         req.user = payload;

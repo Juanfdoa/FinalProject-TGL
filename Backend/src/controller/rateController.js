@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const rateService = require('../services/rateService')
+const {createShema,updateShema} = require('../schemas/rateShema')
 
 const getStudentRates= async (req, res) => {
     try 
@@ -24,14 +25,7 @@ const getStudentRates= async (req, res) => {
 
 const createRate = async (req, res) => {
     try {
-        const schema = Joi.object({
-            studentId: Joi.number().required(),
-            subject: Joi.string().required(),
-            rate: Joi.number().required(),
-            notes: Joi.string()
-        });
-
-        const { error } = schema.validate(req.body);
+        const { error } = createShema.validate(req.body);
         if (error) {
             return res.status(400).json({ error: error.details[0].message });
         }
@@ -50,15 +44,7 @@ const createRate = async (req, res) => {
 
 const updateRate = async (req, res) => {
     try {
-        const schema = Joi.object({
-            id: Joi.number().required(),
-            studentId: Joi.number().required(),
-            subject: Joi.string().required(),
-            rate: Joi.number().required(),
-            notes: Joi.string()
-        });
-
-        const { error } = schema.validate(req.body);
+        const { error } = updateShema.validate(req.body);
         if (error) {
             return res.status(400).json({ error: error.details[0].message });
         }

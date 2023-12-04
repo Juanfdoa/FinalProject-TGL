@@ -1,4 +1,3 @@
-const sequelize = require('../database/sequalize')
 const User = require('../database/models/user')
 const crypto = require('crypto');
 
@@ -9,9 +8,8 @@ async function getUsers() {
 
 async function insertUser(email, password) {
     try {
-        await sequelize.sync();
         const hash = crypto.createHash('sha256');
-        hash.update(password);
+        hash.update(password); 
         const hashedPassword = hash.digest('hex');
         
       const newUser= await User.create({
