@@ -13,7 +13,7 @@ const handleDelete = (id) => {
 
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '10px', margin:'0 30px' }}>
-        {data.map((row)=>(
+        {data && data.map((row)=>(
         <Card key={row.id} sx={{ width:200, margin: '0 5px' }}>
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
              <Button onClick={() => handleDelete(row.id)} size="small" startIcon={<DeleteIcon/>} sx={{ marginLeft: 'auto' }}/>

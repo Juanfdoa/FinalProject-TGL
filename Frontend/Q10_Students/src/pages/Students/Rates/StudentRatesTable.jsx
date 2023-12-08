@@ -45,7 +45,7 @@ const handleDelete = (id) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((row) => (
+            {data && data.map((row) => (
               <TableRow key={row.id}>
                 <TableCell>{row.subject}</TableCell>
                 <TableCell align="center">

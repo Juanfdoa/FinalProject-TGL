@@ -54,7 +54,7 @@ const getStudentRates = async (id) => {
 
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '10px', margin: '0 auto', width: '70%' }}>
-        {data.map((row) => (
+        {data && data.map((row) => (
             <Accordion key={row.id} onChange={() => handleAccordionExpand(row.id)} >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls={row.id} id={row.id}>
                     <Typography>{row.documentNumber + " - " + row.name + " " + row.surname  }</Typography>

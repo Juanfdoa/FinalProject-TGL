@@ -1,45 +1,39 @@
-import * as React from 'react';
+import React, { useState } from 'react';
+import { useNavigate  } from 'react-router-dom';
+import { StartSession } from '../../actions/auth';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Box from '@mui/material/Box';
-import axios from 'axios';
 import '../../../style.css';
 
-export default function Login() {
-  const [formData, setFormData] = React.useState({
-    email: '',
-    password: '',
-  });
+const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
     try {
-      const response = await axios.post('localhost:3000/auth/login', formData);
-      console.log('Respuesta del servidor:', response.data);
-      // Aquí podrías manejar la respuesta del servidor, como guardar tokens de autenticación, redirigir al usuario, etc.
+      const response = await StartSession(email, password);
+      sessionStorage.setItem('token', response);
+      setEmail('');
+      setPassword('');
+
+      navigate('/');
+
     } catch (error) {
-      console.error('Error al enviar la solicitud:', error);
-      // Manejo de errores
+      console.error('Error:', error);
     }
   };
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+    <Box sx={{position: 'absolute',top: '50%',left: '50%',transform: 'translate(-50%, -50%)',bgcolor: 'background.paper',boxShadow: 24,p: 2,width:400, borderRadius:2}}>
       <Card>
         <CardContent>
-          <h1 className='subtitle'>
-            Login
-          </h1>
+          <h1 className='subtitle'>Login</h1>
           <form onSubmit={handleSubmit}>
             <Box
               sx={{
@@ -54,10 +48,10 @@ export default function Login() {
                 required
                 id="email"
                 name="email"
-                label="email"
+                label="Email"
                 variant="outlined"
-                value={formData.email}
-                onChange={handleInputChange}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
               <TextField
                 required
@@ -66,8 +60,8 @@ export default function Login() {
                 label="Password"
                 type="password"
                 variant="outlined"
-                value={formData.password}
-                onChange={handleInputChange}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
               <Button type="submit" variant="contained">Login</Button>
             </Box>
@@ -78,3 +72,5 @@ export default function Login() {
     </Box>
   );
 }
+
+export default Login;

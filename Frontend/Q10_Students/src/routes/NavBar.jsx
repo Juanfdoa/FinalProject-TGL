@@ -6,6 +6,12 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
 export default function NavBar() {
+  const token = sessionStorage.getItem('token');
+
+  const logout =()=>{
+    sessionStorage.removeItem('token');
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -15,10 +21,24 @@ export default function NavBar() {
           </Typography>
           <div>
             <Button href={`/`} color="inherit">Inicio</Button>
-            <Button href={`/users`} color="inherit">Usuarios</Button>
-            <Button href={`/students`} color="inherit">Estudiantes</Button>
-            <Button href={`/subjects`} color="inherit">Materias</Button>
-            <Button href={`/login`} color="inherit">Login</Button>
+            {token ? 
+            (
+              <>
+                <Button href={`/users`} color="inherit">Usuarios</Button>
+                <Button href={`/students`} color="inherit">Estudiantes</Button>
+                <Button href={`/subjects`} color="inherit">Materias</Button>
+                <Button onClick={()=>(logout())} href={`/`} color="inherit">Salir</Button>
+              </>
+            )
+            : 
+            (
+              <>
+                <Button href={`/login`} color="inherit">Login</Button>
+              </>
+            )
+            }
+           
+           
           </div>
         </Toolbar>
       </AppBar>

@@ -5,7 +5,7 @@ const isAutheticated = require('../middleware/isAutheticated')
 
 router.get('/:documentNumber', studentController.getStudent);
 
-//router.use(isAutheticated);
+router.use(isAutheticated);
 
 router.get('/', studentController.getStudents);
 router.post('/create', studentController.createStudent);

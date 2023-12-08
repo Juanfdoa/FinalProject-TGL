@@ -30,7 +30,7 @@ export default function UserTable({ data, deleteUser }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((row) => (
+          {data && data.map((row) => (
             <TableRow key={row.id}>
               <TableCell align="center">
                 <img className='circular-image' src={`https://unavatar.io/github/${getUsernameFromEmail(row.email)}`} alt='' />

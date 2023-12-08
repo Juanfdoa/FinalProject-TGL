@@ -1,7 +1,7 @@
 import React, { useState, useEffect} from 'react';
 import {handleSearch} from '../../../actions/subject.js';
 import { Modal, Box, Button } from '@mui/material';
-import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Select, MenuItem, FormControl, InputLabel, FormHelperText } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import '../../../../style.css';
 
@@ -10,6 +10,10 @@ const [allsubjects, setAllSubjects] = useState([]);
 const [subject, setSubject] = useState('');
 const [rate, setRate] = useState(0);
 const [notes, setNotes] = useState('');
+const [errors, setErrors] = useState({
+    'subject':'',
+    'notes':''
+});
 
 const getSubjects = async ()=>{
     try 
@@ -23,19 +27,38 @@ const getSubjects = async ()=>{
   }
 
 const handleAdd = () => {
-    AddRate(studentId,subject,rate,notes);
+    let newErrors = { subject:'', notes:''};
+
+    if (subject.trim() === '') {
+        newErrors.subject = 'El campo no puede estar vacio';
+    }
+
+    if (notes.trim() === '') {
+        newErrors.notes = 'El campo no puede estar vacio';
+    }
+
+    setErrors(newErrors);
+
+    if (newErrors.subject === '' && newErrors.notes === '') {
+        AddRate(studentId,subject,rate,notes);
+        closeModal();
+    }
+};
+
+const closeModal = ()=>{
     setSubject('');
     setRate(0);
     setNotes('');
+    setErrors({subject:'', notes:''})
     handleClose();
-};
+}
 
 useEffect(() => {   
     getSubjects(); 
   }, []);
 
 return (
-    <Modal open={open} onClose={handleClose}>
+    <Modal open={open} onClose={closeModal}>
         <Box sx={{position: 'absolute',top: '50%',left: '50%',transform: 'translate(-50%, -50%)',bgcolor: 'background.paper',boxShadow: 24,p: 2,maxWidth: 900,minWidth: 300, borderRadius:2}}>
            <h2>Agregar nota</h2>
            <FormControl fullWidth variant="outlined">
@@ -46,6 +69,7 @@ return (
                     value={subject}
                     onChange={(e) => setSubject(e.target.value)}
                     label="Asignatura"
+                    error={errors.subject !== ''}
                 >
                     <MenuItem value="">Seleccionar Asignatura</MenuItem>
                     {allsubjects.map((subject) => (
@@ -54,6 +78,7 @@ return (
                     </MenuItem>
                     ))}
                 </Select>
+                {errors.subject && <FormHelperText style={{ color: 'red' }}>{errors.subject}</FormHelperText>}
             </FormControl>
             <TextField
                 label="Nota"
@@ -71,10 +96,12 @@ return (
                 variant="outlined"
                 fullWidth
                 margin="normal"
+                error={errors.notes !== ''}
+                helperText={errors.notes} 
             />
             <Box>
                 <Button variant="contained" onClick={handleAdd}>Agregar</Button>
-                <Button sx={{margin:2 }} variant="contained" onClick={handleClose}>Cerrar</Button>
+                <Button sx={{margin:2 }} variant="contained" onClick={closeModal}>Cerrar</Button>
             </Box>
         </Box>
     </Modal>
