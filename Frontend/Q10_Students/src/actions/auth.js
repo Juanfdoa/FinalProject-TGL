@@ -1,16 +1,18 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { apiUrl } from './constants';
 
 export const StartSession = async (email, password) => {
   try {
-    const response = await axios.post('http://localhost:3000/auth/login', {email, password }, 
+ 
+    const response = await axios.post(`${apiUrl}/auth/login`, {email, password }, 
     {
       headers: {
         'Content-Type': 'application/json',
       },
     });
     
-    return response.data;
+    return response;
   } 
   catch (error) 
   {

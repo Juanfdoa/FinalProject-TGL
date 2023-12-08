@@ -12,6 +12,7 @@ const [rate, setRate] = useState(0);
 const [notes, setNotes] = useState('');
 const [errors, setErrors] = useState({
     'subject':'',
+    'rate':'',
     'notes':''
 });
 
@@ -27,7 +28,7 @@ const getSubjects = async ()=>{
   }
 
 const handleAdd = () => {
-    let newErrors = { subject:'', notes:''};
+    let newErrors = { subject:'', notes:'', rate:''};
 
     if (subject.trim() === '') {
         newErrors.subject = 'El campo no puede estar vacio';
@@ -37,9 +38,13 @@ const handleAdd = () => {
         newErrors.notes = 'El campo no puede estar vacio';
     }
 
+    if(rate > 5){
+        newErrors.rate = 'La nota no debe ser mayor a 5';
+    }
+
     setErrors(newErrors);
 
-    if (newErrors.subject === '' && newErrors.notes === '') {
+    if (newErrors.subject === '' && newErrors.notes === '' && newErrors.rate ==='') {
         AddRate(studentId,subject,rate,notes);
         closeModal();
     }
@@ -49,7 +54,7 @@ const closeModal = ()=>{
     setSubject('');
     setRate(0);
     setNotes('');
-    setErrors({subject:'', notes:''})
+    setErrors({subject:'', notes:'',rate:''})
     handleClose();
 }
 
@@ -59,7 +64,7 @@ useEffect(() => {
 
 return (
     <Modal open={open} onClose={closeModal}>
-        <Box sx={{position: 'absolute',top: '50%',left: '50%',transform: 'translate(-50%, -50%)',bgcolor: 'background.paper',boxShadow: 24,p: 2,maxWidth: 900,minWidth: 300, borderRadius:2}}>
+        <Box sx={{position: 'absolute',top: '50%',left: '50%',transform: 'translate(-50%, -50%)',bgcolor: 'background.paper',boxShadow: 24,p: 2,width:500, borderRadius:2}}>
            <h2>Agregar nota</h2>
            <FormControl fullWidth variant="outlined">
             <InputLabel id="subject-label">Asignatura</InputLabel>
@@ -88,6 +93,8 @@ return (
                 type="number"
                 fullWidth
                 margin="normal"
+                error={errors.rate !== ''}
+                helperText={errors.rate} 
             />
              <TextField
                 label="Comentarios"

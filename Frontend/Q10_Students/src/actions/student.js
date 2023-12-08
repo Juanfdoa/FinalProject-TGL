@@ -1,12 +1,13 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { apiUrl } from './constants';
 
 const token = sessionStorage.getItem('token');
 
 export const handleSearch = async () => {
     try 
     {
-        const response = await axios.get(`http://localhost:3000/student`, {
+        const response = await axios.get(`${apiUrl}/student`, {
             headers:{
                 'Authorization': `Bearer ${token}`
             }
@@ -20,7 +21,7 @@ export const handleSearch = async () => {
 
 export const handleAdd= async (name, surname, documentNumber, telephone) => {
     try {
-        const response = await axios.post('http://localhost:3000/student/create', { name, surname, documentNumber, telephone }, 
+        const response = await axios.post(`${apiUrl}/student/create`, { name, surname, documentNumber, telephone }, 
         {
             headers: {
             'Content-Type': 'application/json',

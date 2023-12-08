@@ -18,11 +18,12 @@ const Login = () => {
 
     try {
       const response = await StartSession(email, password);
-      sessionStorage.setItem('token', response);
+      if(response.status == 200){
+        sessionStorage.setItem('token', response.data);
+        navigate('/');
+      }
       setEmail('');
       setPassword('');
-
-      navigate('/');
 
     } catch (error) {
       console.error('Error:', error);

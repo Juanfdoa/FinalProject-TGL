@@ -1,12 +1,13 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { apiUrl } from './constants';
 
 const token = sessionStorage.getItem('token');
 
 export const handleSearch = async () => {
     try 
     {
-        const response = await axios.get(`http://localhost:3000/user` , {
+        const response = await axios.get(`${apiUrl}/user` , {
             headers:{
                 'Authorization': `Bearer ${token}`
             }
@@ -31,7 +32,7 @@ export const handleDelete = async (email) => {
         });
 
         if (confirmation.isConfirmed) {
-            await axios.delete(`http://localhost:3000/user/${email}` , {
+            await axios.delete(`${apiUrl}/user/${email}` , {
                 headers:{
                     'Authorization': `Bearer ${token}`
                 }
@@ -48,7 +49,7 @@ export const handleDelete = async (email) => {
 
 export const handleAdd = async (email,password) => {
     try {
-        const response = await axios.post('http://localhost:3000/user/create', { email, password }, 
+        const response = await axios.post(`${apiUrl}/user/create`, { email, password }, 
         {
             headers: {
             'Content-Type': 'application/json',
