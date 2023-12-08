@@ -1,18 +1,29 @@
 # Q10 Students
 
-Q10 es una aplicación diseñada para simplificar y mejorar el proceso de registro de notas. 
-Nuestro objetivo es proporcionarte una herramienta fácil de usar y eficiente para mantener un seguimiento detallado del progreso académico del estudiante.
+Q10 is an application designed to simplify and enhance the grade recording process. Our goal is to provide you with an easy-to-use and efficient tool to keep detailed track of a student's academic progress.
 
 ## Technologies Used
 
 - **Backend:** Built using Node.js.
 - **Frontend:** Developed with React using Vite.
 
-## Running the Project
+## Getting Started
 
-To run the backend, use the following command:
-
+Clone the repository:
 ```bash
-npm start
+git clone https://github.com/Juanfdoa/FinalProject-TGL.git
+```
 
-To run the backend, use the following command:
+Run the Backend:
+```bash
+cd ./Backend
+npm install
+npm start
+```
+
+Run the Frontend:
+```bash
+cd ./Frontend/Q10_Students
+npm install
+npm run dev
+```
