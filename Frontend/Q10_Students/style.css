@@ -1,0 +1,65 @@
+.app {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .NavBar {
+    flex: 0 0 auto;
+    width: 100%;
+    background-color: #f0f0f0; 
+  }
+  
+  .content {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+h3{
+    font-size: 20px;
+    color: blue;
+    text-align: center;
+}
+
+.title{
+    font-size: 50px;
+    color: blue;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    text-align: center;
+}
+
+h2{
+    font-size: 35px;
+    color: blue;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    padding-left: 20px;
+}
+
+.subtitle{
+    font-size: 20px;
+    color: blue;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+}
+
+.text{
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-top: 0px;
+}
+
+.tblText{
+    font-family: Arial, Helvetica, sans-serif;
+    margin-top: 0px;
+}
+
+.li{
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.circular-image {
+    width: 30px; 
+    height: 30px; 
+    border-radius: 50%; 
+  }

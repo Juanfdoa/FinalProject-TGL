@@ -5,7 +5,7 @@ const isAutheticated = require('../middleware/isAutheticated')
 
 router.get('/:studentId', rateController.getStudentRates);
 
-router.use(isAutheticated);
+//router.use(isAutheticated);
 
 router.post('/create', rateController.createRate);
 router.put('/update', rateController.updateRate)

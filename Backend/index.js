@@ -1,4 +1,5 @@
 const express = require('express')
+const cors = require('cors');
 const sequelize = require('./src/database/sequalize')
 const userRouter = require('./src/routes/userRoute')
 const authRouter = require('./src/routes/authRoute')
@@ -18,7 +19,7 @@ async function sincronizarBD() {
 }
 
 sincronizarBD();
-
+app.use(cors());
 app.use(express.json())
 
 app.use('/user', userRouter)
