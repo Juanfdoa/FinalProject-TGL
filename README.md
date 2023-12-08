@@ -1,6 +1,6 @@
 # Q10 Students
 
-Q10 es una aplicación diseñada para simplificar y mejorar el proceso de registro de notas de estudiantes. 
+Q10 es una aplicación diseñada para simplificar y mejorar el proceso de registro de notas. 
 Nuestro objetivo es proporcionarte una herramienta fácil de usar y eficiente para mantener un seguimiento detallado del progreso académico del estudiante.
 
 ## Technologies Used
