@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { handleSearch, handleAdd } from '../../actions/student.js';
+import { handleSearch, handleAdd, handleDelete } from '../../actions/student.js';
 import StudentAccordion from './StudentAccordion';
 import ModalAddStudent from './ModalAddStudent';
 import Button from '@mui/material/Button';
@@ -52,7 +52,7 @@ const Student = () => {
           <ModalAddStudent open={openModal} handleClose={handleCloseModal} AddStudent={AddStudent}/>
       </div>
       <div>
-        <StudentAccordion data={students}/>
+        <StudentAccordion data={students} handleDelete={handleDelete}/>
       </div>
     </>
   );

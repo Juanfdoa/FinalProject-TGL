@@ -70,3 +70,27 @@ export const handleAdd = async (name,teacher) => {
         console.error('Error al realizar la solicitud POST:', error.response.data);
     }
 };
+
+export const handleUpdate = async (id,name,teacher) => {
+    try 
+    {
+        const response = await axios.put(`${apiUrl}/subject/update`, { id, name, teacher }, 
+        {
+            headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+            },
+        });
+
+        if (response.status === 200) {
+            Swal.fire("Actualizado","La materia ha sido actualizada satisfactoriamente","success");
+        } else 
+        {
+            Swal.fire("Error", "Hubo un error al actualizar la materia, intenta nuevamente", "error");
+        }
+    } catch (error) 
+    {
+        Swal.fire("Error", "Hubo un error al actualizar la materia, intenta nuevamente", "error");
+        console.error('Error al realizar la solicitud PUT:', error.response.data);
+    }
+};

@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { handleSearch, handleDelete, handleAdd } from '../../actions/rate';
 import StudentRatesTable from './Rates/StudentRatesTable';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-export default function StudentAccordion({data}) {
+export default function StudentAccordion({data, handleDelete}) {
 const [studentRate, setStudentRate] = useState([]);
 const [studentId, setStudentId] = useState(null);
 
@@ -39,6 +41,14 @@ const getStudentRates = async (id) => {
     }
   };
 
+  const deleteStudent = async(id)=>{
+    try {
+      await handleDelete(id);
+    } catch (error) {
+      console.error('Error al eliminar', error.response.data);
+    }
+  }
+
   const handleAccordionExpand = (id) => {
     setStudentId(id);
     if (id !== null) {
@@ -57,10 +67,13 @@ const getStudentRates = async (id) => {
         {data && data.map((row) => (
             <Accordion key={row.id} onChange={() => handleAccordionExpand(row.id)} >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls={row.id} id={row.id}>
-                    <Typography>{row.documentNumber + " - " + row.name + " " + row.surname  }</Typography>
+                  <Typography>{row.documentNumber + " - " + row.name + " " + row.surname  }</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <StudentRatesTable studentId={row.id} data={studentRate} deleteRate={deleteRate} AddRate={AddRate}/>
+                  <StudentRatesTable studentId={row.id} data={studentRate} deleteRate={deleteRate} AddRate={AddRate}/>
+                  <Button onClick={() => deleteStudent(row.id)} size="medium" startIcon={<DeleteIcon/>} sx={{ marginTop:2 }}>
+                    Eliminar Estudiante
+                  </Button>
                 </AccordionDetails>
             </Accordion>
         ))}

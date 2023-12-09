@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { handleSearch, handleDelete, handleAdd } from '../../actions/subject.js';
+import { handleSearch, handleDelete, handleAdd, handleUpdate } from '../../actions/subject.js';
 import SubjectCard from './SubjectCard';
 import ModalAddSubject from './ModalAddSubject';
 import Button from '@mui/material/Button';
@@ -40,6 +40,16 @@ const Subject = () => {
     }
   };
 
+  const UpdateSubject = async(id,name,teacher)=>{
+    try {
+      await handleUpdate(id, name, teacher);
+      getSubjects();
+    } catch (error) 
+    {
+      console.error('Error al realizar la solicitud PUT:', error);
+    }
+  };
+
   const handleOpenModal = () => {
     setOpenModal(true);
   };
@@ -62,7 +72,7 @@ return (
         <ModalAddSubject open={openModal} handleClose={handleCloseModal} AddSubject={AddSubject}/>
     </div>
     <div>
-      <SubjectCard data={subjects} deleteSubject={deleteSubject}/>
+      <SubjectCard data={subjects} deleteSubject={deleteSubject} UpdateSubject={UpdateSubject}/>
     </div>
   </>
   );

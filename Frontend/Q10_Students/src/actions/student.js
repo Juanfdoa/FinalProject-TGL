@@ -41,3 +41,34 @@ export const handleAdd= async (name, surname, documentNumber, telephone) => {
         console.error('Error al realizar la solicitud POST:', error.response.data);
     }
 };
+
+export const handleDelete = async (id) => {
+    try {
+        const confirmation = await Swal.fire({
+            title: "Estas seguro?",
+            text: "No podras revertir esta acción",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "si, eliminar!"
+        });
+
+        if (confirmation.isConfirmed) {
+            await axios.delete(`${apiUrl}/student/delete/${id}`, {
+                headers:{
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            Swal.fire("Eliminado!","El registro ha sido eliminado","success");
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            Swal.fire("Cancelado", "Tu registro esta seguro :)", "info");
+        }
+    } catch (error) {
+        Swal.fire("Error", "Error al eliminar el estudiante", "error");
+        console.error('Error al eliminar el estudiante:', error.response.data);
+    }
+};
