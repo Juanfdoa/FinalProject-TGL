@@ -1,72 +1,129 @@
-import React, { useState} from 'react';
-import { Modal, Box, Button } from '@mui/material';
-import TextField from '@mui/material/TextField';
-import '../../../style.css';
+import React, { useState } from 'react';
+import {
+  Modal,
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Divider
+} from '@mui/material';
 
-const ModalAddSubject = ({ open, handleClose, AddSubject }) => { 
-const [name, setName] = useState('');
-const [teacher, setTeacher] = useState('');
-const [errors, setErrors] = useState({
-    'name':'',
-    'teacher':''
-});
+const ModalAddSubject = ({ open, handleClose, AddSubject }) => {
+  const [form, setForm] = useState({
+    name: '',
+    teacher: ''
+  });
 
-const handleAdd = () => {
-    let newErrors = { name: '', teacher: '' };
+  const [errors, setErrors] = useState({});
 
-    if (name.trim() === '') {
-        newErrors.name = 'El campo no puede estar vacío';
+  const handleChange = (field) => (e) => {
+    setForm({ ...form, [field]: e.target.value });
+  };
+
+  const validate = () => {
+    let newErrors = {};
+
+    if (!form.name.trim()) {
+      newErrors.name = 'El nombre es obligatorio';
     }
 
-    if (teacher.trim() === '') {
-        newErrors.teacher = 'El campo no puede estar vacío';
+    if (!form.teacher.trim()) {
+      newErrors.teacher = 'El maestro es obligatorio';
     }
 
     setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-    if (newErrors.name === '' && newErrors.teacher === '') {
-        AddSubject(name, teacher);
-        closeModal();
-    }
-};
+  const handleAdd = () => {
+    if (!validate()) return;
 
-const closeModal = ()=>{
-    setName('');
-    setTeacher('');
-    setErrors({name: '', teacher: ''});
+    AddSubject(form.name, form.teacher);
+    closeModal();
+  };
+
+  const closeModal = () => {
+    setForm({ name: '', teacher: '' });
+    setErrors({});
     handleClose();
-}
+  };
 
-return (
+  return (
     <Modal open={open} onClose={closeModal}>
-        <Box sx={{position: 'absolute',top: '50%',left: '50%',transform: 'translate(-50%, -50%)',bgcolor: 'background.paper',boxShadow: 24,p: 2,maxWidth: 900,minWidth: 300, borderRadius:2}}>
-           <h2>Agregar Materia</h2>
-            <TextField
-                label="Nombre"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                variant="outlined"
-                fullWidth
-                error={errors.name !== ''}
-                helperText={errors.name} 
-               
-            />
-            <TextField
-                label="Maestro"
-                value={teacher}
-                onChange={(e) => setTeacher(e.target.value)}
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                error={errors.teacher !== ''}
-                helperText={errors.teacher} 
-            />
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '90%',
+          maxWidth: 400,
+          bgcolor: '#ffffff',
+          borderRadius: 3,
+          boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+          p: 4
+        }}
+      >
+        {/* TITLE */}
+        <Typography variant="h6" fontWeight="bold">
+          Agregar materia
+        </Typography>
 
-            <Box>
-                <Button variant="contained" onClick={handleAdd}>Agregar</Button>
-                <Button sx={{margin:2 }} variant="contained" onClick={closeModal}>Cerrar</Button>
-            </Box>
+        <Typography variant="body2" sx={{ color: '#64748b', mb: 2 }}>
+          Crea una nueva asignatura en el sistema
+        </Typography>
+
+        <Divider sx={{ mb: 2 }} />
+
+        {/* FORM */}
+        <Box display="flex" flexDirection="column" gap={2}>
+          <TextField
+            label="Nombre"
+            size="small"
+            value={form.name}
+            onChange={handleChange('name')}
+            error={!!errors.name}
+            helperText={errors.name}
+            fullWidth
+          />
+
+          <TextField
+            label="Maestro"
+            size="small"
+            value={form.teacher}
+            onChange={handleChange('teacher')}
+            error={!!errors.teacher}
+            helperText={errors.teacher}
+            fullWidth
+          />
         </Box>
+
+        {/* ACTIONS */}
+        <Box mt={3} display="flex" justifyContent="flex-end" gap={1}>
+          <Button
+            onClick={closeModal}
+            sx={{
+              textTransform: 'none',
+              color: '#64748b'
+            }}
+          >
+            Cancelar
+          </Button>
+
+          <Button
+            variant="contained"
+            onClick={handleAdd}
+            sx={{
+              textTransform: 'none',
+              borderRadius: 2,
+              backgroundColor: '#2563eb',
+              '&:hover': { backgroundColor: '#1d4ed8' }
+            }}
+          >
+            Guardar
+          </Button>
+        </Box>
+      </Box>
     </Modal>
   );
 };

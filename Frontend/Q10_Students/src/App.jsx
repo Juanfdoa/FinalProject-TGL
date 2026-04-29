@@ -1,19 +1,22 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './pages/Home/Home';
-import '../style.css';
-import NavBar from './components/NavBar';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import NavBar from './routes/NavBar';
+import Home from './components/Home';
 
 const App = () => {
   return (
-    <div className="app">
-      <NavBar />
-      <div className="content">
-        <Router>
-          <Route exact path='/' render={() =>  <Home />} />
-        </Router>
+    <BrowserRouter>
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        
+        <NavBar />
+
+        <div style={{ flex: 1 }}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+          </Routes>
+        </div>
+
       </div>
-    </div>
+    </BrowserRouter>
   );
 };
 

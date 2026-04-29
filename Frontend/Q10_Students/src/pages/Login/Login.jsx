@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate  } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { StartSession } from '../../actions/auth';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Box from '@mui/material/Box';
-import '../../../style.css';
+import {
+  TextField,
+  Button,
+  Card,
+  CardContent,
+  Box,
+  Typography
+} from '@mui/material';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -18,60 +20,129 @@ const Login = () => {
 
     try {
       const response = await StartSession(email, password);
-      if(response.status == 200){
-        sessionStorage.setItem('token', response.data);
+      if (response.status === 200) {
+        sessionStorage.setItem('token', response?.data?.data?.token);
+        console.log(response?.data?.data?.token)
         navigate('/');
       }
       setEmail('');
       setPassword('');
-
     } catch (error) {
       console.error('Error:', error);
     }
   };
 
   return (
-    <Box sx={{position: 'absolute',top: '50%',left: '50%',transform: 'translate(-50%, -50%)',bgcolor: 'background.paper',boxShadow: 24,p: 2,width:400, borderRadius:2}}>
-      <Card>
-        <CardContent>
-          <h1 className='subtitle'>Login</h1>
-          <form onSubmit={handleSubmit}>
-            <Box
+    <Box
+      sx={{
+        minHeight: '100vh',
+        backgroundColor: '#f8fafc',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        px: 2
+      }}
+    >
+      <Card
+        sx={{
+          width: '100%',
+          maxWidth: 420,
+          borderRadius: 3,
+          boxShadow: '0 2px 10px rgba(0,0,0,0.05)'
+        }}
+      >
+        <CardContent sx={{ p: 4 }}>
+          
+          {/* TITLE */}
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            textAlign="center"
+            mb={1}
+            sx={{ color: '#1e293b' }}
+          >
+            Iniciar sesión
+          </Typography>
+
+          <Typography
+            variant="body2"
+            textAlign="center"
+            sx={{ color: '#64748b', mb: 3 }}
+          >
+            Ingresa tus credenciales para continuar
+          </Typography>
+
+          {/* FORM */}
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            autoComplete="off"
+            sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+          >
+            <TextField
+              required
+              label="Email"
+              type="email"
+              size="small"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                '& > :not(style)': { mb: 2 },
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2
+                }
               }}
-              noValidate
-              autoComplete="off"
+            />
+
+            <TextField
+              required
+              label="Contraseña"
+              type="password"
+              size="small"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2
+                }
+              }}
+            />
+
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              sx={{
+                mt: 1,
+                textTransform: 'none',
+                borderRadius: 2,
+                backgroundColor: '#2563eb',
+                '&:hover': {
+                  backgroundColor: '#1d4ed8'
+                }
+              }}
             >
-              <TextField
-                required
-                id="email"
-                name="email"
-                label="Email"
-                variant="outlined"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <TextField
-                required
-                id="password"
-                name="password"
-                label="Password"
-                type="password"
-                variant="outlined"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <Button type="submit" variant="contained">Login</Button>
-            </Box>
-          </form>
-          <a href='/'>Volver</a>
-        </CardContent> 
+              Iniciar sesión
+            </Button>
+          </Box>
+
+          {/* BACK */}
+          <Box mt={3} textAlign="center">
+            <Button
+              href="/"
+              sx={{
+                textTransform: 'none',
+                color: '#64748b'
+              }}
+            >
+              Volver al inicio
+            </Button>
+          </Box>
+
+        </CardContent>
       </Card>
     </Box>
   );
-}
+};
 
 export default Login;

@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { handleSearch, handleDelete, handleAdd, handleUpdate } from '../../actions/subject.js';
+
+import {
+  handleSearch,
+  handleDelete,
+  handleAdd,
+  handleUpdate
+} from '../../actions/subject.js';
+
 import SubjectCard from './SubjectCard';
 import ModalAddSubject from './ModalAddSubject';
-import Button from '@mui/material/Button';
-import '../../../style.css';
+
+// 🔥 MUI
+import { Box, Button, Typography } from '@mui/material';
 
 const Subject = () => {
   const [subjects, setSubjects] = useState([]);
@@ -64,18 +72,58 @@ const Subject = () => {
 
 return (
   <>
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin:5 }}>
-      <h2>Materias</h2>
-        <Button variant="contained"  onClick={handleOpenModal}>
-          Agregar Materia
-        </Button>
-        <ModalAddSubject open={openModal} handleClose={handleCloseModal} AddSubject={AddSubject}/>
-    </div>
-    <div>
-      <SubjectCard data={subjects} deleteSubject={deleteSubject} UpdateSubject={UpdateSubject}/>
-    </div>
+    {/* HEADER */}
+    <Box
+      sx={{
+        width: '100%',
+        mb: 3,
+        mt:3,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}
+    >
+      <Box>
+        <Typography variant="h5" fontWeight="bold">
+          Materias
+        </Typography>
+
+        <Typography variant="body2" sx={{ color: '#64748b' }}>
+          Administra las asignaturas y sus profesores
+        </Typography>
+      </Box>
+
+      <Button
+        variant="contained"
+        onClick={handleOpenModal}
+        sx={{
+          textTransform: 'none',
+          borderRadius: 2,
+          backgroundColor: '#2563eb',
+          '&:hover': { backgroundColor: '#1d4ed8' }
+        }}
+      >
+        Agregar materia
+      </Button>
+    </Box>
+
+    {/* CONTENT */}
+    <Box sx={{ maxWidth: '100%', mx: 'auto' }}>
+      <SubjectCard
+        data={subjects}
+        deleteSubject={deleteSubject}
+        UpdateSubject={UpdateSubject}
+      />
+    </Box>
+
+    {/* MODAL */}
+    <ModalAddSubject
+      open={openModal}
+      handleClose={handleCloseModal}
+      AddSubject={AddSubject}
+    />
   </>
-  );
+);
 };
 
 export default Subject;

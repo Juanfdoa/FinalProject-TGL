@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Card, CardContent, CardActions, Button, TextField } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  CardActions,
+  Button,
+  TextField,
+  Typography,
+  Box
+} from '@mui/material';
 import StudentModal from './StudentModal';
+import { apiUrl } from '../../actions/constants';
 
 export default function HomeCard() {
   const [userData, setUserData] = useState(null);
@@ -11,14 +20,14 @@ export default function HomeCard() {
 
   const handleSearch = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/student/${documentNumber}`);
-      setUserData(response.data);
-      setId(response.data.id)
+      const response = await axios.get(`${apiUrl}/api/v1/students/${documentNumber}`);
+      setUserData(response.data?.data);
+      setId(response.data?.data?.id);
     } catch (error) {
       setUserData(null);
       if (error.response) {
         console.error('Error en la solicitud:', error.response.data);
-      } 
+      }
     }
     setOpenModal(true);
   };
@@ -32,40 +41,89 @@ export default function HomeCard() {
   const handleCloseModal = () => {
     setOpenModal(false);
   };
-  
+
   return (
     <>
-      <Card sx={{ maxWidth: 345 }}>
+      <Card
+        sx={{
+          maxWidth: 400,
+          borderRadius: 3,
+          boxShadow: '0 2px 10px rgba(0,0,0,0.05)'
+        }}
+      >
         <CardContent>
-          <h3>Buscar Estudiante</h3>
-          <form
+          
+          {/* TITLE */}
+          <Typography
+            variant="h6"
+            fontWeight="bold"
+            gutterBottom
+            sx={{ color: '#1e293b' }}
+          >
+            Buscar Estudiante
+          </Typography>
+
+          <Typography
+            variant="body2"
+            sx={{ color: '#64748b', mb: 2 }}
+          >
+            Ingresa el documento para consultar la información.
+          </Typography>
+
+          {/* FORM */}
+          <Box
+            component="form"
             noValidate
             autoComplete="off"
             onSubmit={(e) => {
               e.preventDefault();
-              handleSearch(); 
+              handleSearch();
               setDocumentNumber('');
             }}
           >
             <TextField
-              id="documentoIdentidad"
-              label="Documento de Identidad"
+              label="Documento de identidad"
               variant="outlined"
               fullWidth
-              margin="normal"
+              size="small"
               value={documentNumber}
               onChange={(e) => setDocumentNumber(e.target.value)}
+              sx={{
+                mb: 2,
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2
+                }
+              }}
             />
-            <CardActions>
-              <Button type="submit" size="small">
+
+            <CardActions sx={{ p: 0 }}>
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                sx={{
+                  textTransform: 'none',
+                  borderRadius: 2,
+                  backgroundColor: '#2563eb',
+                  '&:hover': {
+                    backgroundColor: '#1d4ed8'
+                  }
+                }}
+              >
                 Buscar
               </Button>
             </CardActions>
-          </form>
+          </Box>
+
         </CardContent>
       </Card>
-      <StudentModal open={openModal} handleClose={handleCloseModal} userData={userData} id={id}/>
+
+      <StudentModal
+        open={openModal}
+        handleClose={handleCloseModal}
+        userData={userData}
+        id={id}
+      />
     </>
   );
 }
-

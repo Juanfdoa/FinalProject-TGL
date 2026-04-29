@@ -1,72 +1,70 @@
 import axios from 'axios';
-import Swal from 'sweetalert2';
+import { alert, confirm } from "../utils/alerts";
 import { apiUrl } from './constants';
 
 const token = sessionStorage.getItem('token');
 
 export const handleSearch = async (id) => {
-    try 
-    {
-      const response = await axios.get(`${apiUrl}/rates/${id}`, {
-        headers:{
-            'Authorization': `Bearer ${token}`
-        }
+  try {
+    const response = await axios.get(`${apiUrl}/api/v1/rates/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     });
-      return(response.data);
-    } 
-    catch (error) 
-    {
-      console.error('Error en la solicitud:', error.response.data);
-    }
+
+    return response.data?.data;
+
+  } catch (error) {
+    console.error('Error en la solicitud:', error?.response?.data);
+    alert({title: "Error",text: "Error al obtener la información de la nota",icon: "error"});
+  }
 };
 
 export const handleDelete = async (id) => {
   try {
-    const confirmation = await Swal.fire({
-        title: "Estas seguro?",
-        text: "No podras revertir esta acción",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "si, eliminar!"
+    const confirmation = await confirm({
+      title: "¿Estás seguro?",
+      text: "No podrás revertir esta acción",
+      confirmButtonText: "Sí, eliminar"
     });
 
-    if (confirmation.isConfirmed) {
-        await axios.delete(`${apiUrl}/rates/delete/${id}`, {
-          headers:{
-              'Authorization': `Bearer ${token}`
-          }
-      });
-        Swal.fire("Eliminado!","El registro ha sido eliminado","success");
-    } else {
-        Swal.fire("Cancelado", "Tu registro esta seguro :)", "info");
-    }
+    if (!confirmation.isConfirmed) return;
+
+    await axios.delete(`${apiUrl}/api/v1/rates/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    alert({title: "Eliminado",text: "La nota ha sido eliminada",icon: "success"});
+
   } catch (error) {
-      Swal.fire("Error", "Error al eliminar la nota", "error");
-      console.error('Error al eliminar la nota:', error.response.data);
+    console.error('Error al eliminar la nota:', error?.response?.data);
+    alert({title: "Error", text: "Error al eliminar la nota",icon: "error"});
   }
 };
 
-export const handleAdd = async (studentId,subject, rate, notes) => {
-    try {
-      const response = await axios.post(`${apiUrl}/rates/create`, {studentId,subject, rate, notes }, 
+export const handleAdd = async (studentId, subject, rate, notes) => {
+  try {
+    const response = await axios.post(
+      `${apiUrl}/api/v1/rates`,
+      { studentId, subject, rate, notes },
       {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
-        },
-      });
-
-      if (response.status === 201) {
-        Swal.fire("Agregado","la nota ha sido agregada satisfactoriamente","success");
-      } else {
-        Swal.fire("Error", "Hubo un error al agregar la nota, intenta nuevamente", "error");
+        }
       }
-    } 
-    catch (error) 
-    {
-      Swal.fire("Error", "Hubo un error al agregar la nota, intenta nuevamente", "error");
-      console.error('Error al realizar la solicitud POST:', error);
+    );
+    
+    if (response.status === 201) {
+      alert({title: "Agregado",text: "La nota ha sido agregada correctamente",icon: "success"});
+    } else {
+      alert({title: "Error",text: "Hubo un error al agregar la nota",icon: "error"});
     }
+
+  } catch (error) {
+    console.error('Error al realizar la solicitud POST:', error?.response?.data);
+    alert({title: "Error",text: "Hubo un error al agregar la nota",icon: "error"});
+  }
 };

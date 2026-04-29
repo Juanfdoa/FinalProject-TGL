@@ -1,16 +1,25 @@
 import React from 'react';
+import { Box } from '@mui/material';
 import Home from './Home';
 import NavBar from '../../routes/NavBar';
-import '../../../style.css';
 
 const HomeContainer = () => {
   return (
-    <div className="app">
+    <Box sx={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
+      
       <NavBar />
-      <div className="content">
-       <Home/>
-      </div>
-    </div>
+
+      <Box
+        component="main"
+        sx={{
+          px: { xs: 2, md: 4 },
+          py: 3
+        }}
+      >
+        <Home />
+      </Box>
+
+    </Box>
   );
 };
 

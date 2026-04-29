@@ -1,82 +1,138 @@
-import React, { useState, useEffect } from 'react';
-import { handleSearch, handleDelete, handleAdd } from '../../actions/rate';
-import StudentRatesTable from './Rates/StudentRatesTable';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import React, { useState } from 'react';
+import {
+  Box,
+  Button,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
+  Avatar
+} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import StudentRatesTable from './Rates/StudentRatesTable';
+import { handleSearch, handleDelete, handleAdd } from '../../actions/rate';
 
-export default function StudentAccordion({data, handleDelete}) {
-const [studentRate, setStudentRate] = useState([]);
-const [studentId, setStudentId] = useState(null);
+export default function StudentAccordion({ data, handleDelete: deleteStudentAction, refreshStudents }) {
 
-const getStudentRates = async (id) => {
+  const [studentRates, setStudentRates] = useState({});
+  const [expanded, setExpanded] = useState(null);
+
+  const getStudentRates = async (id) => {
     try {
-      const response = await handleSearch(id)
-      setStudentRate(response);
+      const response = await handleSearch(id);
+      setStudentRates(prev => ({
+        ...prev,
+        [id]: response
+      }));
     } catch (error) {
-      console.error('Error en la solicitud:', error.response.data);
+      console.error('Error:', error.response?.data);
     }
   };
 
-  const deleteRate = async (id) => {
-    try {
-      await handleDelete(id);
-      getStudentRates(studentId);
-    } catch (error) {
-      console.error('Error al eliminar la nota:', error.response.data);
-    }
-  };
-
-  const AddRate = async (studentId,subject, rate, notes) => {
-    try {
-      await handleAdd(studentId,subject,rate,notes);
-      getStudentRates(studentId);
-    } catch (error) {
-      console.error('Error insertar nota', error.response.data);
-    }
-  };
-
-  const deleteStudent = async(id)=>{
+  const deleteRate = async (id, studentId) => {
     try {
       await handleDelete(id);
+      getStudentRates(studentId);
     } catch (error) {
-      console.error('Error al eliminar', error.response.data);
-    }
-  }
-
-  const handleAccordionExpand = (id) => {
-    setStudentId(id);
-    if (id !== null) {
-      handleSearch(id);
+      console.error(error.response?.data);
     }
   };
 
-  useEffect(() => {
-    if (studentId !== null) {
+  const addRate = async (studentId, subject, rate, notes) => {
+    try {
+      await handleAdd(studentId, subject, rate, notes);
       getStudentRates(studentId);
+    } catch (error) {
+      console.error(error.response?.data);
     }
-  }, [studentId]); 
+  };
+
+  const deleteStudent = async (id) => {
+    try {
+      await deleteStudentAction(id);
+      await refreshStudents();
+    } catch (error) {
+      console.error(error.response?.data);
+    }
+  };
+
+  const handleChange = (id) => (_, isExpanded) => {
+    setExpanded(isExpanded ? id : null);
+
+    if (isExpanded && !studentRates[id]) {
+      getStudentRates(id);
+    }
+  };
 
   return (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '10px', margin: '0 auto', width: '70%' }}>
-        {data && data.map((row) => (
-            <Accordion key={row.id} onChange={() => handleAccordionExpand(row.id)} >
-                <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls={row.id} id={row.id}>
-                  <Typography>{row.documentNumber + " - " + row.name + " " + row.surname  }</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <StudentRatesTable studentId={row.id} data={studentRate} deleteRate={deleteRate} AddRate={AddRate}/>
-                  <Button onClick={() => deleteStudent(row.id)} size="medium" startIcon={<DeleteIcon/>} sx={{ marginTop:2 }}>
-                    Eliminar Estudiante
-                  </Button>
-                </AccordionDetails>
-            </Accordion>
-        ))}
+    <Box sx={{ maxWidth: '100%', mx: 'auto' }}>
+
+      {data?.map((row) => (
+        <Accordion
+          key={row.id}
+          expanded={expanded === row.id}
+          onChange={handleChange(row.id)}
+          sx={{
+            mb: 2,
+            borderRadius: 2,
+            boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+            '&:before': { display: 'none' }
+          }}
+        >
+          {/* HEADER */}
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+
+            <Box display="flex" alignItems="center" gap={2}>
+
+              <Avatar sx={{ bgcolor: '#2563eb' }}>
+                {row.name?.charAt(0)}
+              </Avatar>
+
+              <Box>
+                <Typography fontWeight="bold">
+                  {row.name} {row.surname}
+                </Typography>
+
+                <Typography variant="body2" sx={{ color: '#64748b' }}>
+                  {row.documentNumber}
+                </Typography>
+              </Box>
+
+            </Box>
+
+          </AccordionSummary>
+
+          {/* CONTENT */}
+          <AccordionDetails>
+
+            <StudentRatesTable
+              studentId={row.id}
+              data={studentRates[row.id] || []}
+              deleteRate={(rateId) => deleteRate(rateId, row.id)}
+              AddRate={addRate}
+            />
+
+            <Box mt={2} textAlign="right">
+              <Button
+                onClick={() => deleteStudent(row.id)}
+                startIcon={<DeleteIcon />}
+                sx={{
+                  textTransform: 'none',
+                  color: '#ef4444',
+                  '&:hover': {
+                    backgroundColor: '#fee2e2'
+                  }
+                }}
+              >
+                Eliminar estudiante
+              </Button>
+            </Box>
+
+          </AccordionDetails>
+        </Accordion>
+      ))}
+
     </Box>
   );
 }

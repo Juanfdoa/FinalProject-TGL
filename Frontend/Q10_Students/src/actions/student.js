@@ -1,74 +1,70 @@
 import axios from 'axios';
-import Swal from 'sweetalert2';
+import { alert, confirm } from "../utils/alerts";
 import { apiUrl } from './constants';
 
 const token = sessionStorage.getItem('token');
 
 export const handleSearch = async () => {
-    try 
-    {
-        const response = await axios.get(`${apiUrl}/student`, {
-            headers:{
+    try {
+        const response = await axios.get(`${apiUrl}/api/v1/students`, {
+            headers: {
                 'Authorization': `Bearer ${token}`
             }
         });
-        return response.data;
-    } catch (error) 
-    {
-        console.error('Error en la solicitud:', error.response.data);
+
+        return response.data?.data;
+
+    } catch (error) {
+        console.error('Error en la solicitud:', error?.response?.data);
+        alert({title: "Error",text: "Error al obtener los estudiantes",icon: "error"});
     }
 };
 
-export const handleAdd= async (name, surname, documentNumber, telephone) => {
+export const handleAdd = async (name, surname, documentNumber, telephone) => {
     try {
-        const response = await axios.post(`${apiUrl}/student/create`, { name, surname, documentNumber, telephone }, 
-        {
-            headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-            },
-        });
+        const response = await axios.post(
+            `${apiUrl}/api/v1/students`,
+            { name, surname, documentNumber, telephone },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            }
+        );
 
         if (response.status === 201) {
-            Swal.fire("Agregado","El estudiante ha sido agregado satisfactoriamente","success");
-        } 
-        else  {
-            Swal.fire("Error", "Hubo un error al agregar el estudiante, intenta nuevamente", "error");
+            alert({title: "Agregado",text: "El estudiante ha sido agregado correctamente",icon: "success"});
+        } else {
+            alert({title: "Error",text: "No se pudo agregar el estudiante",icon: "error"});
         }
-    } catch (error) 
-    {
-        Swal.fire("Error", "Hubo un error al agregar el estudiante, intenta nuevamente", "error");
-        console.error('Error al realizar la solicitud POST:', error.response.data);
+
+    } catch (error) {
+        console.error('Error al realizar la solicitud POST:', error?.response?.data);
+        alert({title: "Error",text: "Hubo un error al agregar el estudiante",icon: "error"});
     }
 };
 
 export const handleDelete = async (id) => {
     try {
-        const confirmation = await Swal.fire({
-            title: "Estas seguro?",
-            text: "No podras revertir esta acción",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "si, eliminar!"
+        const confirmation = await confirm({
+            title: "¿Estás seguro?",
+            text: "No podrás revertir esta acción",
+            confirmButtonText: "Sí, eliminar"
         });
 
-        if (confirmation.isConfirmed) {
-            await axios.delete(`${apiUrl}/student/delete/${id}`, {
-                headers:{
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            Swal.fire("Eliminado!","El registro ha sido eliminado","success");
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
-        } else {
-            Swal.fire("Cancelado", "Tu registro esta seguro :)", "info");
-        }
+        if (!confirmation.isConfirmed) return;
+
+        await axios.delete(`${apiUrl}/api/v1/students/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        alert({title: "Eliminado",text: "El estudiante ha sido eliminado",icon: "success"});
+
     } catch (error) {
-        Swal.fire("Error", "Error al eliminar el estudiante", "error");
-        console.error('Error al eliminar el estudiante:', error.response.data);
+        console.error('Error al eliminar el estudiante:', error?.response?.data);
+        alert({title: "Error",text: "Error al eliminar el estudiante",icon: "error"});
     }
 };

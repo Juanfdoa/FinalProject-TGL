@@ -1,49 +1,107 @@
 import React from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  Avatar,
+  Typography,
+  Box
+} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function UserTable({ data, deleteUser }) {
-  const handleDelete = (email) => {
-    deleteUser(email);
-  };
 
-  const getUsernameFromEmail = (email) => {
-    return email.split('@')[0];
+  const getUsernameFromEmail = (email) => email.split('@')[0];
+
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString();
   };
 
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="simple table">
+    <TableContainer
+      component={Paper}
+      sx={{
+        borderRadius: 3,
+        boxShadow: '0 2px 10px rgba(0,0,0,0.05)'
+      }}
+    >
+      <Table stickyHeader>
+
+        {/* HEADER */}
         <TableHead>
-          <TableRow>
-            <TableCell align="center"><strong>Icono</strong></TableCell>
-            <TableCell align="center"><strong>Email</strong></TableCell>
-            <TableCell align="center"><strong>Fecha creación</strong></TableCell>
-            <TableCell align="center"><strong>---</strong></TableCell>
+          <TableRow sx={{ backgroundColor: '#f1f5f9' }}>
+            <TableCell align="center"><b>Usuario</b></TableCell>
+            <TableCell align="center"><b>Email</b></TableCell>
+            <TableCell align="center"><b>Creación</b></TableCell>
+            <TableCell align="center"><b>Acciones</b></TableCell>
           </TableRow>
         </TableHead>
+
+        {/* BODY */}
         <TableBody>
-          {data && data.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell align="center">
-                <img className='circular-image' src={`https://unavatar.io/github/${getUsernameFromEmail(row.email)}`} alt='' />
+          {data?.map((row) => (
+            <TableRow
+              key={row.id}
+              hover
+              sx={{ '&:hover': { backgroundColor: '#f8fafc' } }}
+            >
+              {/* AVATAR + USER */}
+              <TableCell>
+                <Box display="flex" alignItems="center" gap={2}>
+                  <Avatar
+                    src={`https://unavatar.io/github/${getUsernameFromEmail(row.email)}`}
+                  />
+                  <Typography fontWeight="500">
+                    {getUsernameFromEmail(row.email)}
+                  </Typography>
+                </Box>
               </TableCell>
-              <TableCell align="center">{row.email}</TableCell>
-              <TableCell align="center">{row.createdAt}</TableCell>
+
+              {/* EMAIL */}
               <TableCell align="center">
-                <Button onClick={() => handleDelete(row.email)} variant="outlined" startIcon={<DeleteIcon />}>
-                    Eliminar
+                {row.email}
+              </TableCell>
+
+              {/* DATE */}
+              <TableCell align="center">
+                {formatDate(row.createdAt)}
+              </TableCell>
+
+              {/* ACTION */}
+              <TableCell align="center">
+                <Button
+                  onClick={() => deleteUser(row.id)}
+                  startIcon={<DeleteIcon />}
+                  sx={{
+                    textTransform: 'none',
+                    color: '#ef4444',
+                    '&:hover': {
+                      backgroundColor: '#fee2e2'
+                    }
+                  }}
+                >
+                  Eliminar
                 </Button>
               </TableCell>
             </TableRow>
           ))}
+
+          {/* EMPTY STATE */}
+          {data?.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={4} align="center">
+                <Typography sx={{ color: '#64748b' }}>
+                  No hay usuarios registrados
+                </Typography>
+              </TableCell>
+            </TableRow>
+          )}
+
         </TableBody>
       </Table>
     </TableContainer>

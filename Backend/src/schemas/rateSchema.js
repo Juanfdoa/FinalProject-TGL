@@ -2,7 +2,7 @@ const Joi = require('joi');
 
 const createSchema = Joi.object({
     studentId: Joi.string().guid({ version: 'uuidv4' }).required(),
-    subjectId: Joi.string().guid({ version: 'uuidv4' }).required(),
+    subject: Joi.string().required(),
     rate: Joi.number().required(),
     notes: Joi.string()
 });
@@ -14,7 +14,7 @@ const updateSchema = Joi.object({
     
     body: Joi.object({
         studentId: Joi.string().guid({ version: 'uuidv4' }).required(),
-        subjectId: Joi.string().guid({ version: 'uuidv4' }).required(),
+        subject: Joi.string().required(),
         rate: Joi.number().required(),
         notes: Joi.string()
     }).required()      

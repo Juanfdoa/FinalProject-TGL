@@ -1,15 +1,28 @@
-import React, { useState } from 'react';
-import { Modal, Box, Button } from '@mui/material';
-import TextField from '@mui/material/TextField';
-import '../../../style.css';
+import React, { useState, useEffect } from 'react';
+import {
+  Modal,
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Divider
+} from '@mui/material';
 
 const ModalUpdateSubject = ({ subjectEdit, open, handleClose, UpdateSubject }) => {
-  const [name, setName] = useState(subjectEdit.name || '');
-  const [teacher, setTeacher] = useState(subjectEdit.teacher || '');
+  const [name, setName] = useState('');
+  const [teacher, setTeacher] = useState('');
   const [errors, setErrors] = useState({
     name: '',
     teacher: ''
   });
+
+  // 🔥 IMPORTANTE: sincronizar cuando cambia el subject
+  useEffect(() => {
+    if (subjectEdit) {
+      setName(subjectEdit.name || '');
+      setTeacher(subjectEdit.teacher || '');
+    }
+  }, [subjectEdit]);
 
   const handleUpdate = () => {
     let newErrors = { name: '', teacher: '' };
@@ -24,15 +37,13 @@ const ModalUpdateSubject = ({ subjectEdit, open, handleClose, UpdateSubject }) =
 
     setErrors(newErrors);
 
-    if (newErrors.name === '' && newErrors.teacher === '') {
+    if (!newErrors.name && !newErrors.teacher) {
       UpdateSubject(subjectEdit.id, name, teacher);
       closeModal();
     }
   };
 
   const closeModal = () => {
-    setName(subjectEdit.name || '');
-    setTeacher(subjectEdit.teacher || '');
     setErrors({ name: '', teacher: '' });
     handleClose();
   };
@@ -45,41 +56,88 @@ const ModalUpdateSubject = ({ subjectEdit, open, handleClose, UpdateSubject }) =
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 2,
-          maxWidth: 900,
-          minWidth: 300,
-          borderRadius: 2
+          width: '90%',
+          maxWidth: 420,
+          bgcolor: '#ffffff',
+          borderRadius: 3,
+          boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+          p: 4
         }}
       >
-        <h2>Editar Materia</h2>
-        <TextField
-          label="Nombre"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          variant="outlined"
-          fullWidth
-          error={errors.name !== ''}
-          helperText={errors.name}
-        />
-        <TextField
-          label="Maestro"
-          value={teacher}
-          onChange={(e) => setTeacher(e.target.value)}
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          error={errors.teacher !== ''}
-          helperText={errors.teacher}
-        />
+        {/* TITLE */}
+        <Typography variant="h6" fontWeight="bold" mb={1}>
+          Editar materia
+        </Typography>
 
-        <Box>
-          <Button variant="contained" onClick={handleUpdate}>
-            Actualizar
+        <Typography variant="body2" sx={{ color: '#64748b', mb: 2 }}>
+          Actualiza la información de la materia
+        </Typography>
+
+        <Divider sx={{ mb: 2 }} />
+
+        {/* FORM */}
+        <Box display="flex" flexDirection="column" gap={2}>
+          <TextField
+            label="Nombre"
+            size="small"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            fullWidth
+            error={!!errors.name}
+            helperText={errors.name}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 2
+              }
+            }}
+          />
+
+          <TextField
+            label="Profesor"
+            size="small"
+            value={teacher}
+            onChange={(e) => setTeacher(e.target.value)}
+            fullWidth
+            error={!!errors.teacher}
+            helperText={errors.teacher}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 2
+              }
+            }}
+          />
+        </Box>
+
+        {/* ACTIONS */}
+        <Box
+          mt={3}
+          display="flex"
+          justifyContent="flex-end"
+          gap={1}
+        >
+          <Button
+            onClick={closeModal}
+            sx={{
+              textTransform: 'none',
+              color: '#64748b'
+            }}
+          >
+            Cancelar
           </Button>
-          <Button sx={{ margin: 2 }} variant="contained" onClick={closeModal}>
-            Cerrar
+
+          <Button
+            variant="contained"
+            onClick={handleUpdate}
+            sx={{
+              textTransform: 'none',
+              borderRadius: 2,
+              backgroundColor: '#2563eb',
+              '&:hover': {
+                backgroundColor: '#1d4ed8'
+              }
+            }}
+          >
+            Actualizar
           </Button>
         </Box>
       </Box>

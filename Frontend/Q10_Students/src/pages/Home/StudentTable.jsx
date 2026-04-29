@@ -1,48 +1,93 @@
 import React from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Box,
+  Typography
+} from '@mui/material';
 
 export default function StudentTable({ data }) {
-  const getTextColor = (rate) => {
-    return rate < 3.0 ? 'red' : 'green'; 
+
+  const getColor = (rate) => {
+    return rate < 3
+      ? '#ef4444'   // rojo suave
+      : '#22c55e';  // verde moderno
   };
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer
+      component={Paper}
+      sx={{
+        borderRadius: 3,
+        boxShadow: '0 2px 10px rgba(0,0,0,0.05)'
+      }}
+    >
       <Box
         sx={{
-          display: 'flex',
-          justifyContent: 'center',
+          maxHeight: 300,
+          overflow: 'auto'
         }}
       >
-        <Box sx={{ maxHeight: 280, width: 800, overflow: 'auto', border:'solid', borderRadius:2 }}>
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell align="center">Asignatura</TableCell>
-                <TableCell align="center">Nota</TableCell>
-                <TableCell align="center">Comentarios</TableCell>
+        <Table stickyHeader>
+          
+          {/* HEADER */}
+          <TableHead>
+            <TableRow
+              sx={{
+                backgroundColor: '#f1f5f9'
+              }}
+            >
+              <TableCell align="center">
+                <Typography fontWeight="bold">Asignatura</Typography>
+              </TableCell>
+              <TableCell align="center">
+                <Typography fontWeight="bold">Nota</Typography>
+              </TableCell>
+              <TableCell align="center">
+                <Typography fontWeight="bold">Comentarios</Typography>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+
+          {/* BODY */}
+          <TableBody>
+            {data.map((row) => (
+              <TableRow
+                key={row.id}
+                hover
+                sx={{
+                  '&:hover': {
+                    backgroundColor: '#f8fafc'
+                  }
+                }}
+              >
+                <TableCell>{row.subject}</TableCell>
+
+                <TableCell align="center">
+                  <Typography
+                    fontWeight="bold"
+                    sx={{
+                      color: getColor(row.rate)
+                    }}
+                  >
+                    {row.rate}
+                  </Typography>
+                </TableCell>
+
+                <TableCell sx={{ color: '#475569' }}>
+                  {row.notes || '—'}
+                </TableCell>
+
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell>{row.subject}</TableCell>
-                  <TableCell align="center">
-                    <span style={{ color: getTextColor(row.rate) }}>{row.rate}</span>
-                  </TableCell>
-                  <TableCell>{row.notes}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Box>
+            ))}
+          </TableBody>
+
+        </Table>
       </Box>
     </TableContainer>
   );

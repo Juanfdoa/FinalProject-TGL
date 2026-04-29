@@ -1,52 +1,114 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Modal, Box, Button } from '@mui/material';
+import {
+  Modal,
+  Box,
+  Button,
+  Typography,
+  Divider
+} from '@mui/material';
 import StudentTable from './StudentTable';
+import { apiUrl } from '../../actions/constants';
 
-const StudentModal = ({ open, handleClose, userData, id}) => {
-const [studentRate, setStudentRate] = useState([]);
+const StudentModal = ({ open, handleClose, userData, id }) => {
+  const [studentRate, setStudentRate] = useState([]);
 
-const handleSearch = async () => {
+  const handleSearch = async () => {
     try {
-        const response = await axios.get(`http://localhost:3000/rates/${id}`);
-        setStudentRate(response.data);
+      const response = await axios.get(`${apiUrl}/api/v1/rates/${id}`);
+      setStudentRate(response.data?.data);
     } catch (error) {
-        console.error('Error en la solicitud:', error.response.data);
+      console.error('Error en la solicitud:', error.response?.data);
     }
-};
+  };
 
-useEffect(() => {
+  useEffect(() => {
     if (userData !== null) {
-        handleSearch();
+      handleSearch();
     }
-}, [userData]);   
+  }, [userData]);
 
-return (
+  return (
     <Modal open={open} onClose={handleClose}>
       <Box
-        sx={{position: 'absolute',top: '50%',left: '50%',transform: 'translate(-50%, -50%)',bgcolor: 'background.paper',boxShadow: 24,p: 4,maxWidth: 900,minWidth: 300, borderRadius:2}}>
+        sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          bgcolor: '#ffffff',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+          p: 4,
+          width: '90%',
+          maxWidth: 800,
+          borderRadius: 3
+        }}
+      >
+        {/* TITLE */}
+        <Typography variant="h6" fontWeight="bold" mb={2}>
+          Información del Estudiante
+        </Typography>
+
+        <Divider sx={{ mb: 2 }} />
+
+        {/* NO DATA */}
         {userData === null && (
-            <p>No se encontraron datos para el estudiante.</p>
+          <Typography color="error">
+            No se encontraron datos para el estudiante.
+          </Typography>
         )}
-        
+
+        {/* STUDENT DATA */}
         {userData && (
-          <div>
-            <h2 className='subtitle'>Datos del Estudiante:</h2>
-            <p className='tblText'><strong>Nombre:</strong> {userData.name + " " + userData.surname}</p>
-            <p className='tblText'><strong>Número documento:</strong> {userData.documentNumber}</p>
-            <p className='tblText'><strong>Telefono:</strong> {userData.telephone}</p>
+          <Box mb={3}>
+            <Typography sx={{ color: '#475569', mb: 1 }}>
+              <strong>Nombre:</strong> {userData.name} {userData.surname}
+            </Typography>
+
+            <Typography sx={{ color: '#475569', mb: 1 }}>
+              <strong>Documento:</strong> {userData.documentNumber}
+            </Typography>
+
+            <Typography sx={{ color: '#475569' }}>
+              <strong>Teléfono:</strong> {userData.telephone}
+            </Typography>
+          </Box>
+        )}
+
+        {/* RATES */}
+        {userData && (
+          <>
+            <Typography variant="subtitle1" fontWeight="bold" mb={1}>
+              Notas
+            </Typography>
 
             {studentRate.length > 0 ? (
-                <div>
-                    <h2 className='subtitle'>Notas</h2>
-                    <StudentTable data={studentRate}/>
-                </div>
+              <StudentTable data={studentRate} />
             ) : (
-              <p className='text'>No hay calificaciones disponibles.</p>
+              <Typography sx={{ color: '#64748b' }}>
+                No hay calificaciones disponibles.
+              </Typography>
             )}
-          </div>
+          </>
         )}
-        <Button onClick={handleClose}>Cerrar</Button>
+
+        {/* ACTION */}
+        <Box mt={3} display="flex" justifyContent="flex-end">
+          <Button
+            onClick={handleClose}
+            variant="contained"
+            sx={{
+              textTransform: 'none',
+              borderRadius: 2,
+              backgroundColor: '#2563eb',
+              '&:hover': {
+                backgroundColor: '#1d4ed8'
+              }
+            }}
+          >
+            Cerrar
+          </Button>
+        </Box>
       </Box>
     </Modal>
   );

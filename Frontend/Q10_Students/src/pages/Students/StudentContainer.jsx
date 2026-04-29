@@ -1,16 +1,27 @@
 import React from 'react';
-import '../../../style.css';
+import { Box } from '@mui/material';
+
 import NavBar from '../../routes/NavBar';
 import Student from './Student';
 
 const StudentContainer = () => {
   return (
-    <div className="app">
+    <Box display="flex" flexDirection="column" minHeight="100vh">
+      
       <NavBar />
-      <div className="content">
-       <Student/>
-      </div>
-    </div>
+
+      <Box
+        sx={{
+          width: '100%',
+          maxWidth: 1200,
+          mx: 'auto',
+          px: 2
+        }}
+      >
+        <Student />
+      </Box>
+
+    </Box>
   );
 };
 

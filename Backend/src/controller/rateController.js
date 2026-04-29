@@ -31,8 +31,8 @@ const createRate = async (req, res) => {
             return errorResponse(res, error.details[0].message, 400);
         }
 
-        const { studentId, subjectId, rate, notes} = req.body;
-        const newRate = await rateService.insertRate(studentId, subjectId, rate, notes)
+        const { studentId, subject, rate, notes} = req.body;
+        const newRate = await rateService.insertRate(studentId, subject, rate, notes)
         return successResponse(res, newRate, 'Rate created successfully', 201);
     } 
     catch (error) {
@@ -53,8 +53,8 @@ const updateRate = async (req, res) => {
         }
 
         const {id} = req.params;
-        const {studentId, subjectId, rate, notes} = req.body;
-        const updateRate = await rateService.updateRate(id, studentId, subjectId, rate, notes)
+        const {studentId, subject, rate, notes} = req.body;
+        const updateRate = await rateService.updateRate(id, studentId, subject, rate, notes)
         return successResponse(res, updateRate, "Rate updated successfully")
     } 
     catch (error) {

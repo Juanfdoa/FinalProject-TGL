@@ -1,116 +1,179 @@
-import React, { useState, useEffect} from 'react';
-import {handleSearch} from '../../../actions/subject.js';
-import { Modal, Box, Button } from '@mui/material';
-import { Select, MenuItem, FormControl, InputLabel, FormHelperText } from '@mui/material';
-import TextField from '@mui/material/TextField';
-import '../../../../style.css';
+import React, { useState, useEffect } from 'react';
+import {
+  Modal,
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Divider,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  FormHelperText
+} from '@mui/material';
+import { handleSearch } from '../../../actions/subject.js';
 
-const ModalAddStudentRate = ({studentId, open, handleClose, AddRate }) => { 
-const [allsubjects, setAllSubjects] = useState([]);
-const [subject, setSubject] = useState('');
-const [rate, setRate] = useState(0);
-const [notes, setNotes] = useState('');
-const [errors, setErrors] = useState({
-    'subject':'',
-    'rate':'',
-    'notes':''
-});
+const ModalAddStudentRate = ({ studentId, open, handleClose, AddRate }) => {
+  const [allSubjects, setAllSubjects] = useState([]);
+  const [subject, setSubject] = useState('');
+  const [rate, setRate] = useState('');
+  const [notes, setNotes] = useState('');
+  const [errors, setErrors] = useState({
+    subject: '',
+    rate: '',
+    notes: ''
+  });
 
-const getSubjects = async ()=>{
-    try 
-    {
+  useEffect(() => {
+    if (open) {
+      getSubjects();
+    }
+  }, [open]);
+
+  const getSubjects = async () => {
+    try {
       const response = await handleSearch();
       setAllSubjects(response);
-    } catch (error) 
-    {
-      console.error('Error en la solicitud:', error.response.data);
+    } catch (error) {
+      console.error(error.response?.data);
     }
-  }
+  };
 
-const handleAdd = () => {
-    let newErrors = { subject:'', notes:'', rate:''};
+  const handleAdd = () => {
+    let newErrors = { subject: '', notes: '', rate: '' };
 
-    if (subject.trim() === '') {
-        newErrors.subject = 'El campo no puede estar vacio';
-    }
+    const numericRate = parseFloat(rate);
 
-    if (notes.trim() === '') {
-        newErrors.notes = 'El campo no puede estar vacio';
+    if (!subject) {
+      newErrors.subject = 'Selecciona una asignatura';
     }
 
-    if(rate > 5){
-        newErrors.rate = 'La nota no debe ser mayor a 5';
+    if (!notes.trim()) {
+      newErrors.notes = 'El campo no puede estar vacío';
+    }
+
+    if (isNaN(numericRate)) {
+      newErrors.rate = 'Ingresa una nota válida';
+    } else if (numericRate < 0 || numericRate > 5) {
+      newErrors.rate = 'La nota debe estar entre 0 y 5';
     }
 
     setErrors(newErrors);
 
-    if (newErrors.subject === '' && newErrors.notes === '' && newErrors.rate ==='') {
-        AddRate(studentId,subject,rate,notes);
-        closeModal();
+    if (!newErrors.subject && !newErrors.notes && !newErrors.rate) {
+      AddRate(studentId, subject, numericRate, notes);
+      closeModal();
     }
-};
+  };
 
-const closeModal = ()=>{
+  const closeModal = () => {
     setSubject('');
-    setRate(0);
+    setRate('');
     setNotes('');
-    setErrors({subject:'', notes:'',rate:''})
+    setErrors({ subject: '', notes: '', rate: '' });
     handleClose();
-}
+  };
 
-useEffect(() => {   
-    getSubjects(); 
-  }, []);
-
-return (
+  return (
     <Modal open={open} onClose={closeModal}>
-        <Box sx={{position: 'absolute',top: '50%',left: '50%',transform: 'translate(-50%, -50%)',bgcolor: 'background.paper',boxShadow: 24,p: 2,width:500, borderRadius:2}}>
-           <h2>Agregar nota</h2>
-           <FormControl fullWidth variant="outlined">
-            <InputLabel id="subject-label">Asignatura</InputLabel>
-                <Select
-                    labelId="subject-label"
-                    id="subject"
-                    value={subject}
-                    onChange={(e) => setSubject(e.target.value)}
-                    label="Asignatura"
-                    error={errors.subject !== ''}
-                >
-                    <MenuItem value="">Seleccionar Asignatura</MenuItem>
-                    {allsubjects.map((subject) => (
-                    <MenuItem key={subject.id} value={subject.name}>
-                        {subject.name}
-                    </MenuItem>
-                    ))}
-                </Select>
-                {errors.subject && <FormHelperText style={{ color: 'red' }}>{errors.subject}</FormHelperText>}
-            </FormControl>
-            <TextField
-                label="Nota"
-                value={rate}
-                onChange={(e) => setRate(parseFloat(e.target.value))}
-                variant="outlined"
-                type="number"
-                fullWidth
-                margin="normal"
-                error={errors.rate !== ''}
-                helperText={errors.rate} 
-            />
-             <TextField
-                label="Comentarios"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                error={errors.notes !== ''}
-                helperText={errors.notes} 
-            />
-            <Box>
-                <Button variant="contained" onClick={handleAdd}>Agregar</Button>
-                <Button sx={{margin:2 }} variant="contained" onClick={closeModal}>Cerrar</Button>
-            </Box>
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '90%',
+          maxWidth: 420,
+          bgcolor: '#ffffff',
+          borderRadius: 3,
+          boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+          p: 4
+        }}
+      >
+        {/* TITLE */}
+        <Typography variant="h6" fontWeight="bold" mb={1}>
+          Agregar nota
+        </Typography>
+
+        <Typography variant="body2" sx={{ color: '#64748b', mb: 2 }}>
+          Registra una nueva calificación
+        </Typography>
+
+        <Divider sx={{ mb: 2 }} />
+
+        {/* FORM */}
+        <Box display="flex" flexDirection="column" gap={2}>
+          
+          {/* SUBJECT */}
+          <FormControl fullWidth size="small" error={!!errors.subject}>
+            <InputLabel>Asignatura</InputLabel>
+            <Select
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              label="Asignatura"
+            >
+              {allSubjects.map((s) => (
+                <MenuItem key={s.id} value={s.name}>
+                  {s.name}
+                </MenuItem>
+              ))}
+            </Select>
+            <FormHelperText>{errors.subject}</FormHelperText>
+          </FormControl>
+
+          {/* RATE */}
+          <TextField
+            label="Nota"
+            type="number"
+            size="small"
+            value={rate}
+            onChange={(e) => setRate(e.target.value)}
+            fullWidth
+            error={!!errors.rate}
+            helperText={errors.rate}
+          />
+
+          {/* NOTES */}
+          <TextField
+            label="Comentarios"
+            size="small"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            fullWidth
+            multiline
+            rows={3}
+            error={!!errors.notes}
+            helperText={errors.notes}
+          />
         </Box>
+
+        {/* ACTIONS */}
+        <Box mt={3} display="flex" justifyContent="flex-end" gap={1}>
+          <Button
+            onClick={closeModal}
+            sx={{
+              textTransform: 'none',
+              color: '#64748b'
+            }}
+          >
+            Cancelar
+          </Button>
+
+          <Button
+            variant="contained"
+            onClick={handleAdd}
+            sx={{
+              textTransform: 'none',
+              borderRadius: 2,
+              backgroundColor: '#2563eb',
+              '&:hover': { backgroundColor: '#1d4ed8' }
+            }}
+          >
+            Guardar
+          </Button>
+        </Box>
+      </Box>
     </Modal>
   );
 };

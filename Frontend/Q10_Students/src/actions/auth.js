@@ -5,7 +5,7 @@ import { apiUrl } from './constants';
 export const StartSession = async (email, password) => {
   try {
  
-    const response = await axios.post(`${apiUrl}/auth/login`, {email, password }, 
+    const response = await axios.post(`${apiUrl}/api/v1/auth/login`, {email, password }, 
     {
       headers: {
         'Content-Type': 'application/json',

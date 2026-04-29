@@ -10,11 +10,11 @@ async function getRateByStudent(studentId) {
   return allRates
 }
 
-async function insertRate(studentId, subjectId, rate, notes) {
+async function insertRate(studentId, subject, rate, notes) {
     try {
       const newRate = await rates.create({
         studentId,
-        subjectId,
+        subject,
         rate,
         notes
       });

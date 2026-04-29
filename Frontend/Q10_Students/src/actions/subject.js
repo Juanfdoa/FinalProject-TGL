@@ -1,96 +1,94 @@
 import axios from 'axios';
-import Swal from 'sweetalert2';
+import { alert, confirm } from "../utils/alerts";
 import { apiUrl } from './constants';
 
 const token = sessionStorage.getItem('token');
 export const handleSearch = async () => {
-    try 
-    {
-        const response = await axios.get(`${apiUrl}/subject`, {
-            headers:{
+    try {
+        const response = await axios.get(`${apiUrl}/api/v1/subjects`, {
+            headers: {
                 'Authorization': `Bearer ${token}`
             }
         });
-        return response.data;
-    } 
-    catch (error) 
-    {
-        console.error('Error en la solicitud:', error.response.data);
+
+        return response.data?.data;
+
+    } catch (error) {
+        console.error('Error en la solicitud:', error?.response?.data);
+        alert({title: "Error",text: "Error al obtener las materias",icon: "error"});
     }
 };
 
 export const handleDelete = async (id) => {
     try {
-        const confirmation = await Swal.fire({
-            title: "Estas seguro?",
-            text: "No podras revertir esta acción",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "si, eliminar!"
+        const confirmation = await confirm({
+            title: "¿Estás seguro?",
+            text: "No podrás revertir esta acción",
+            confirmButtonText: "Sí, eliminar"
         });
 
-        if (confirmation.isConfirmed) {
-            await axios.delete(`${apiUrl}/subject/delete/${id}`, {
-                headers:{
+        if (!confirmation.isConfirmed) return;
+
+        await axios.delete(`${apiUrl}/api/v1/subjects/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        alert({title: "Eliminado",text: "La materia ha sido eliminada",icon: "success"});
+
+    } catch (error) {
+        console.error('Error al eliminar la materia:', error?.response?.data);
+        alert({title: "Error",text: "Error al eliminar la materia",icon: "error"});
+    }
+};
+
+export const handleAdd = async (name, teacher) => {
+    try {
+        const response = await axios.post(
+            `${apiUrl}/api/v1/subjects`,
+            { name, teacher },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 }
-            });
-            Swal.fire("Eliminado!","El registro ha sido eliminado","success");
-        } else {
-            Swal.fire("Cancelado", "Tu registro esta seguro :)", "info");
-        }
-    } catch (error) {
-        Swal.fire("Error", "Error al eliminar la materia", "error");
-        console.error('Error al eliminar la materia:', error.response.data);
-    }
-};
-
-export const handleAdd = async (name,teacher) => {
-    try 
-    {
-        const response = await axios.post(`${apiUrl}/subject/create`, { name, teacher }, 
-        {
-            headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-            },
-        });
+            }
+        );
 
         if (response.status === 201) {
-            Swal.fire("Agregado","La materia ha sido agregada satisfactoriamente","success");
-        } else 
-        {
-            Swal.fire("Error", "Hubo un error al agregar la materia, intenta nuevamente", "error");
+            alert({title: "Agregado",text: "La materia ha sido agregada correctamente",icon: "success"});
+        } else {
+            alert({title: "Error",text: "No se pudo agregar la materia",icon: "error"});
         }
-    } catch (error) 
-    {
-        Swal.fire("Error", "Hubo un error al agregar la materia, intenta nuevamente", "error");
-        console.error('Error al realizar la solicitud POST:', error.response.data);
+
+    } catch (error) {
+        console.error('Error al realizar la solicitud POST:', error?.response?.data);
+        alert({title: "Error",text: "Hubo un error al agregar la materia",icon: "error"});
     }
 };
 
-export const handleUpdate = async (id,name,teacher) => {
-    try 
-    {
-        const response = await axios.put(`${apiUrl}/subject/update`, { id, name, teacher }, 
-        {
-            headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-            },
-        });
+export const handleUpdate = async (id, name, teacher) => {
+    try {
+        const response = await axios.put(
+            `${apiUrl}/api/v1/subjects/${id}`,
+            { name, teacher },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            }
+        );
 
         if (response.status === 200) {
-            Swal.fire("Actualizado","La materia ha sido actualizada satisfactoriamente","success");
-        } else 
-        {
-            Swal.fire("Error", "Hubo un error al actualizar la materia, intenta nuevamente", "error");
+            alert({title: "Actualizado",text: "La materia ha sido actualizada correctamente",icon: "success"});
+        } else {
+            alert({title: "Error",text: "No se pudo actualizar la materia",icon: "error"});
         }
-    } catch (error) 
-    {
-        Swal.fire("Error", "Hubo un error al actualizar la materia, intenta nuevamente", "error");
-        console.error('Error al realizar la solicitud PUT:', error.response.data);
+
+    } catch (error) {
+        console.error('Error al realizar la solicitud PUT:', error?.response?.data);
+        alert({title: "Error",text: "Hubo un error al actualizar la materia",icon: "error"});
     }
 };
