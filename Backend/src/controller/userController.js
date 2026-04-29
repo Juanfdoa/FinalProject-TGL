@@ -1,12 +1,13 @@
 const Joi = require('joi');
 const userService = require('../services/userService')
+const { successResponse, errorResponse } = require('../Utils/response');
 
 const getUsers= async (req, res) => {
     try {
-        const users = await userService.getUsers()
-        res.status(200).json(users);
+        const users = await userService.getUsers();
+        return successResponse(res, users, 'Users retrieved successfully');
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        return errorResponse(res, error.message, error.statusCode);
     }
 };
 
@@ -19,42 +20,42 @@ const createUser = async (req, res) => {
 
         const { error } = schema.validate(req.body);
         if (error) {
-            return res.status(400).json({ error: error.details[0].message });
+            return errorResponse(res, error.details[0].message, 400);
         }
 
         const { email, password} = req.body;
         const user = await userService.insertUser(email, password)
         if (!user) {
-            res.status(404).json({ error: 'Bad request' });
+           return errorResponse(res, 'Not found', 404);
         }
-        res.status(201).json(user);
+
+        return successResponse(res, user, 'User created successfully', 201);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        return errorResponse(res, error.message, error.statusCode);
     }
 };
 
 const deleteUser = async (req, res) => {
     try {
         const schema = Joi.object({
-            email: Joi.string().email().required()
+            id: Joi.string().guid({ version: 'uuidv4' }).required()
         });
 
-        const { error } = schema.validate({ email: req.params.email });
+        const { error } = schema.validate({ id: req.params.id });
         if (error) {
-            return res.status(400).json({ error: error.details[0].message });
+            return errorResponse(res, error.details[0].message, 400);
         }
 
-        const email = req.params.email;
-        console.log("correo"+ email)
-        const userDeleted = await userService.deleteUser(email)
+        const id = req.params.id;
+        const userDeleted = await userService.deleteUser(id)
 
         if (!userDeleted) {
-            return res.status(404).json({ error: 'User was not found' });
+            return errorResponse(res, 'Not found', 404);
         }
 
-        res.status(204).send();
+        return successResponse(res, null, 'User deleted successfully', 204);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        return errorResponse(res, error.message, error.statusCode);
     }
 }
 

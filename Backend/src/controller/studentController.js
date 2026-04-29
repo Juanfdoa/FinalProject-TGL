@@ -1,13 +1,16 @@
 const Joi = require('joi');
 const studentService = require('../services/studentService')
-const {createShema, updateShema} = require('../schemas/studentShema')
+const {createSchema, updateSchema} = require('../schemas/studentSchema')
+const { successResponse, errorResponse } = require('../Utils/response');
 
 const getStudents= async (req, res) => {
-    try {
+    try 
+    {
         const students = await studentService.getStudents()
-        res.status(200).json(students);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+        return successResponse(res, students, 'Students retrieved successfully');
+    } 
+    catch (error) {
+        return errorResponse(res, error.message, error.statusCode);
     }
 };
 
@@ -20,53 +23,53 @@ const getStudent= async (req, res) => {
 
         const { error } = schema.validate({ documentNumber: req.params.documentNumber });
         if (error) {
-            return res.status(400).json({ error: error.details[0].message });
+            return errorResponse(res, error.details[0].message, 400);
         }
 
         const document = req.params.documentNumber;
-        console.log(document)
         const student = await studentService.getStudentByDocument(document)
-        res.status(200).json(student);
-    } catch (error) {
-        res.status(404).json({ error: error.message });
+        return successResponse(res, student, 'Student retrieved successfully');
+    } 
+    catch (error) {
+        return errorResponse(res, error.message, error.statusCode);
     }
 };
 
 const createStudent = async (req, res) => {
-    try {
-        const { error } = createShema.validate(req.body);
+    try 
+    {
+        const { error } = createSchema.validate(req.body);
         if (error) {
-            return res.status(400).json({ error: error.details[0].message });
+            return errorResponse(res, error.details[0].message, 400);
         }
 
         const { name, surname, documentNumber, telephone} = req.body;
         const student = await studentService.insertStudent(name, surname, documentNumber, telephone)
-
-        if (!student) {
-            res.status(404).json({ error: 'Bad request' });
-        }
-        res.status(201).json(student);
+        return successResponse(res, student, 'Student Created successfully', 201);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        return errorResponse(res, error.message, error.statusCode);
     }
 };
 
 const updateStudent = async (req, res) => {
-    try {
-        const { error } = updateShema.validate(req.body);
+    try 
+    {
+        const { error } = updateSchema.validate({
+            params: req.params,
+            body: req.body
+        });
+
         if (error) {
-            return res.status(400).json({ error: error.details[0].message });
+            return errorResponse(res, error.details[0].message, 400);
         }
 
-        const {id, name, surname, documentNumber, telephone} = req.body;
-        const student = await studentService.updateStudent(id, name, surname, documentNumber, telephone)
-
-        if (!student) {
-            res.status(404).json({ error: 'Bad request' });
-        }
-        res.status(200).json(student);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+        const { id } = req.params;
+        const { name, surname, documentNumber, telephone } = req.body;
+        const student = await studentService.updateStudent(id,name,surname,documentNumber,telephone);
+        return successResponse(res, student, 'Student Updated successfully');
+    } 
+    catch (error) {
+        return errorResponse(res, error.message, error.statusCode);
     }
 };
 
@@ -74,24 +77,20 @@ const deleteStudent = async (req, res) => {
     try
     {
         const schema = Joi.object({
-            id: Joi.required()
+            id: Joi.string().guid({ version: 'uuidv4' }).required()
         });
 
         const { error } = schema.validate({ id: req.params.id });
         if (error) {
-            return res.status(400).json({ error: error.details[0].message });
+            return errorResponse(res, error.details[0].message, 400);
         }
 
         const id = req.params.id;
-        const studentDeleted = await studentService.deleteStudent(id)
-
-        if (!studentDeleted) {
-            return res.status(404).json({ error: 'Student was not found' });
-        }
-
-        res.status(204).send();
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+        await studentService.deleteStudent(id);
+        return successResponse(res, null, 'Student deleted successfully', 204);
+    } 
+    catch (error) {
+        return errorResponse(res, error.message, error.statusCode);
     }
 }
 

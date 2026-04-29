@@ -27,7 +27,7 @@ function Home() {
             </ul>
             <Grid container spacing={2}>
                 <Grid item xs={12} md={4}>
-                    <img src={img1} alt="Ayuda" style={{ width: '100%', height: 'auto' }} />
+                    <img src='C:/Users/FernandoAcevedo/Documents/Techgenies/rockerbox-new-api/Rockerbox.Api/wwwroot/icons/icon2.svg' alt="Ayuda" style={{ width: '100%', height: 'auto' }} />
                 </Grid>
                 <Grid item xs={12} md={4}>
                     <img src={img2} alt="Dinamico" style={{ width: '100%', height: 'auto' }} />

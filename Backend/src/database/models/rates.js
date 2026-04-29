@@ -2,8 +2,14 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../sequalize'); 
 
 const rates = sequelize.define('rates', {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true,
+    allowNull: false
+  },
   studentId:{
-    type:DataTypes.NUMBER,
+    type:DataTypes.UUID,
     allowNull: false,
     unique: false
   },

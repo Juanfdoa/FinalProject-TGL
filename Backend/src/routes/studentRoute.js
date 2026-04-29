@@ -8,9 +8,9 @@ router.get('/:documentNumber', studentController.getStudent);
 router.use(isAutheticated);
 
 router.get('/', studentController.getStudents);
-router.post('/create', studentController.createStudent);
-router.put('/update', studentController.updateStudent)
-router.delete('/delete/:id', studentController.deleteStudent);
+router.post('/', studentController.createStudent);
+router.put('/:id', studentController.updateStudent)
+router.delete('/:id', studentController.deleteStudent);
 
 
 

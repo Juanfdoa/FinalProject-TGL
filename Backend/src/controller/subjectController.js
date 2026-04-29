@@ -1,51 +1,53 @@
 const Joi = require('joi');
 const subjectService = require('../services/subjectService')
-const {createShema,updateShema} = require('../schemas/subjectShema')
+const {createSchema,updateSchema} = require('../schemas/subjectSchema')
+const { successResponse, errorResponse } = require('../Utils/response');
 
 const getSubjects= async (req, res) => {
-    try {
+    try 
+    {
         const subjects = await subjectService.getSubjects()
-        res.status(200).json(subjects);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+        return successResponse(res, subjects, 'Subjects retrieved successfully');
+    } 
+    catch (error) {
+        return errorResponse(res, error.message, error.statusCode);
     }
 };
 
 const createSubject = async (req, res) => {
     try {
-        const { error } = createShema.validate(req.body);
+        const { error } = createSchema.validate(req.body);
         if (error) {
-            return res.status(400).json({ error: error.details[0].message });
+            return errorResponse(res, error.details[0].message, 400);
         }
 
         const { name, teacher} = req.body;
         const subject = await subjectService.insertSubject(name, teacher)
-
-        if (!subject) {
-            res.status(404).json({ error: 'Bad request' });
-        }
-        res.status(201).json(subject);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+        return successResponse(res, subject, 'Subject Created successfully', 201);
+    } 
+    catch (error) {
+        return errorResponse(res, error.message, error.statusCode);
     }
 };
 
 const updateSubject = async (req, res) => {
     try {
-        const { error } = updateShema.validate(req.body);
+        const { error } = updateSchema.validate({
+            params: req.params,
+            body: req.body
+        });
+
         if (error) {
-            return res.status(400).json({ error: error.details[0].message });
+            return errorResponse(res, error.details[0].message, 400);
         }
 
-        const {id, name, teacher} = req.body;
+        const { id } = req.params;
+        const {name, teacher} = req.body;
         const subject = await subjectService.updateSubject(id, name, teacher)
-
-        if (!subject) {
-            res.status(404).json({ error: 'Bad request' });
-        }
-        res.status(200).json(subject);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+        return successResponse(res, subject, 'Subject updated successfully');
+    } 
+    catch (error) {
+        return errorResponse(res, error.message, error.statusCode);
     }
 };
 
@@ -53,24 +55,20 @@ const deleteSubject = async (req, res) => {
     try
     {
         const schema = Joi.object({
-            id: Joi.required()
+            id: Joi.string().guid({ version: 'uuidv4' }).required()
         });
 
         const { error } = schema.validate({ id: req.params.id });
         if (error) {
-            return res.status(400).json({ error: error.details[0].message });
+            return errorResponse(res, error.details[0].message, 400);
         }
 
         const id = req.params.id;
-        const subjectDeleted = await subjectService.deleteSubject(id);
-
-        if (!subjectDeleted) {
-            return res.status(404).json({ error: 'Subject was not found' });
-        }
-
-        res.status(204).send();
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+        await subjectService.deleteSubject(id);
+        return successResponse(res, null, 'Subject deleted successfully', 204);
+    } 
+    catch (error) {
+        return errorResponse(res, error.message, error.statusCode);
     }
 }
 

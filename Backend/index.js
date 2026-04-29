@@ -19,14 +19,15 @@ async function sincronizarBD() {
 }
 
 sincronizarBD();
+
 app.use(cors());
 app.use(express.json())
 
-app.use('/user', userRouter)
-app.use('/auth', authRouter)
-app.use('/student', studentRouter)
-app.use('/subject', subjectRouter)
-app.use('/rates', rateRouter)
+app.use('/api/v1/users', userRouter)
+app.use('/api/v1/auth', authRouter)
+app.use('/api/v1/students', studentRouter)
+app.use('/api/v1/subjects', subjectRouter)
+app.use('/api/v1/rates', rateRouter)
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`)

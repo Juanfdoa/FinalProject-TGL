@@ -6,8 +6,8 @@ const isAutheticated = require('../middleware/isAutheticated')
 router.use(isAutheticated);
 
 router.get('/', subjectController.getSubjects);
-router.post('/create', subjectController.createSubject);
-router.put('/update', subjectController.updateSubject)
-router.delete('/delete/:id', subjectController.deleteSubject);
+router.post('/', subjectController.createSubject);
+router.put('/:id', subjectController.updateSubject)
+router.delete(':id', subjectController.deleteSubject);
 
 module.exports = router

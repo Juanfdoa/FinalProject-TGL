@@ -7,9 +7,9 @@ router.get('/:studentId', rateController.getStudentRates);
 
 router.use(isAutheticated);
 
-router.post('/create', rateController.createRate);
-router.put('/update', rateController.updateRate)
-router.delete('/delete/:id', rateController.deleteRate);
+router.post('/', rateController.createRate);
+router.put('/:id', rateController.updateRate)
+router.delete('/:id', rateController.deleteRate);
 
 
 

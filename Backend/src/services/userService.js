@@ -23,11 +23,11 @@ async function insertUser(email, password) {
     }
   }
 
-  async function deleteUser(email) {
+  async function deleteUser(id) {
     try {
         const userToDelete = await User.findOne({
             where: {
-                email: email
+                id: id
             }
         });
 

@@ -1,63 +1,64 @@
 const Joi = require('joi');
 const rateService = require('../services/rateService')
-const {createShema,updateShema} = require('../schemas/rateShema')
+const {createSchema,updateSchema} = require('../schemas/rateSchema')
+const { successResponse, errorResponse } = require('../Utils/response');
 
 const getStudentRates= async (req, res) => {
     try 
     {
         const schema = Joi.object({
-            studentId: Joi.required()
+            studentId: Joi.string().guid({ version: 'uuidv4' }).required()
         });
 
         const { error } = schema.validate({ studentId: req.params.studentId });
         if (error) {
-            return res.status(400).json({ error: error.details[0].message });
+            return errorResponse(res, error.details[0].message, 400);
         }
 
         const studentId= req.params.studentId;
-
         const studentRates = await rateService.getRateByStudent(studentId)
-        res.status(200).json(studentRates);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+        return successResponse(res, studentRates, 'Rates retrieved successfully');
+    } 
+    catch (error) {
+        return errorResponse(res, error.message, error.statusCode);
     }
 };
 
 const createRate = async (req, res) => {
     try {
-        const { error } = createShema.validate(req.body);
+        const { error } = createSchema.validate(req.body);
         if (error) {
-            return res.status(400).json({ error: error.details[0].message });
+            return errorResponse(res, error.details[0].message, 400);
         }
 
-        const { studentId, subject, rate, notes} = req.body;
-        const newRate = await rateService.insertRate(studentId, subject, rate, notes)
-
-        if (!newRate) {
-            res.status(404).json({ error: 'Bad request' });
-        }
-        res.status(201).json(newRate);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+        const { studentId, subjectId, rate, notes} = req.body;
+        const newRate = await rateService.insertRate(studentId, subjectId, rate, notes)
+        return successResponse(res, newRate, 'Rate created successfully', 201);
+    } 
+    catch (error) {
+        return errorResponse(res, error.message, error.statusCode);
     }
 };
 
 const updateRate = async (req, res) => {
-    try {
-        const { error } = updateShema.validate(req.body);
+    try 
+    {
+        const { error } = updateSchema.validate({
+            params: req.params,
+            body: req.body
+        });
+
         if (error) {
-            return res.status(400).json({ error: error.details[0].message });
+            return errorResponse(res, error.details[0].message, 400);
         }
 
-        const { id, studentId, subject, rate, notes} = req.body;
-        const updateRate = await rateService.updateRate(id, studentId, subject, rate, notes)
-
-        if (!updateRate) {
-            res.status(404).json({ error: 'Bad request' });
-        }
-        res.status(200).json(updateRate);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+        const {id} = req.params;
+        const {studentId, subjectId, rate, notes} = req.body;
+        const updateRate = await rateService.updateRate(id, studentId, subjectId, rate, notes)
+        return successResponse(res, updateRate, "Rate updated successfully")
+    } 
+    catch (error) {
+        return errorResponse(res, error.message, error.statusCode);
     }
 };
 
@@ -65,24 +66,20 @@ const deleteRate = async (req, res) => {
     try
     {
         const schema = Joi.object({
-            id: Joi.required()
+            id: Joi.string().guid({ version: 'uuidv4' }).required()
         });
 
         const { error } = schema.validate({ id: req.params.id});
         if (error) {
-            return res.status(400).json({ error: error.details[0].message });
+           return errorResponse(res, error.details[0].message, 400);
         }
 
         const id = req.params.id;
-        const rateDeleted = await rateService.deleteRate(id);
-
-        if (!rateDeleted) {
-            return res.status(404).json({ error: 'Rate was not found' });
-        }
-
-        res.status(204).send();
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+        await rateService.deleteRate(id);
+        return successResponse(res, null, 'Rate deleted successfully', 204);
+    } 
+    catch (error) {
+        return errorResponse(res, error.message, error.statusCode);
     }
 }
 
