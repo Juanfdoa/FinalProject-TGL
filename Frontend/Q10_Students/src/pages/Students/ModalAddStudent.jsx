@@ -98,6 +98,7 @@ const ModalAddStudent = ({ open, handleClose, AddStudent }) => {
         {/* FORM */}
         <Box display="flex" flexDirection="column" gap={2}>
           <TextField
+            data-cy="student-name"
             label="Nombre"
             size="small"
             value={form.name}
@@ -108,6 +109,7 @@ const ModalAddStudent = ({ open, handleClose, AddStudent }) => {
           />
 
           <TextField
+            data-cy="student-lastname"
             label="Apellido"
             size="small"
             value={form.surname}
@@ -118,6 +120,7 @@ const ModalAddStudent = ({ open, handleClose, AddStudent }) => {
           />
 
           <TextField
+            data-cy="student-document"
             label="Número de documento"
             size="small"
             value={form.documentNumber}
@@ -128,6 +131,7 @@ const ModalAddStudent = ({ open, handleClose, AddStudent }) => {
           />
 
           <TextField
+            data-cy="student-phone"
             label="Teléfono"
             size="small"
             value={form.telephone}
@@ -151,6 +155,7 @@ const ModalAddStudent = ({ open, handleClose, AddStudent }) => {
           </Button>
 
           <Button
+            data-cy="button-save-student"
             variant="contained"
             onClick={handleAdd}
             sx={{

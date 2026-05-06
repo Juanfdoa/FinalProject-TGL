@@ -67,6 +67,7 @@ const Student = () => {
       </Box>
 
       <Button
+        data-cy="button-add-student"
         variant="contained"
         onClick={handleOpenModal}
         sx={{

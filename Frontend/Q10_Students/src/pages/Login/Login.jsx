@@ -82,6 +82,7 @@ const Login = () => {
           >
             <TextField
               required
+              data-cy="input-email"
               label="Email"
               type="email"
               size="small"
@@ -96,6 +97,7 @@ const Login = () => {
 
             <TextField
               required
+              data-cy="input-password"
               label="Contraseña"
               type="password"
               size="small"
@@ -110,6 +112,7 @@ const Login = () => {
 
             <Button
               type="submit"
+              data-cy="button-login"
               variant="contained"
               fullWidth
               sx={{

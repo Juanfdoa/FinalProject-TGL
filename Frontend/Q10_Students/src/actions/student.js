@@ -50,7 +50,7 @@ export const handleDelete = async (id) => {
         const confirmation = await confirm({
             title: "¿Estás seguro?",
             text: "No podrás revertir esta acción",
-            confirmButtonText: "Sí, eliminar"
+            confirmButtonText: "Sí, eliminar",
         });
 
         if (!confirmation.isConfirmed) return;

@@ -82,6 +82,7 @@ export default function HomeCard() {
             }}
           >
             <TextField
+              data-cy="input-search"
               label="Documento de identidad"
               variant="outlined"
               fullWidth
@@ -98,6 +99,7 @@ export default function HomeCard() {
 
             <CardActions sx={{ p: 0 }}>
               <Button
+                data-cy="button-search"   // id para identificarlo en cypress
                 type="submit"
                 variant="contained"
                 fullWidth

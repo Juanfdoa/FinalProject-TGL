@@ -54,7 +54,9 @@ async function login(email, password) {
       });
 
       if (!user) {
-          throw new Error('Wrong email or password');
+        const error = new Error('Invalid Credentials');
+        error.statusCode = 401;
+        throw error;
       }
 
 
@@ -63,7 +65,9 @@ async function login(email, password) {
       const hashedPassword = hash.digest('hex');
 
       if (hashedPassword !== user.password) {
-          throw new Error('Wrong username or password');
+        const error = new Error('Invalid Credentials');
+        error.statusCode = 401;
+        throw error;
       }
 
       return user;

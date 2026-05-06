@@ -71,6 +71,7 @@ export default function StudentAccordion({ data, handleDelete: deleteStudentActi
       {data?.map((row) => (
         <Accordion
           key={row.id}
+          data-cy="student-row"
           expanded={expanded === row.id}
           onChange={handleChange(row.id)}
           sx={{
@@ -116,6 +117,7 @@ export default function StudentAccordion({ data, handleDelete: deleteStudentActi
             <Box mt={2} textAlign="right">
               <Button
                 onClick={() => deleteStudent(row.id)}
+                data-cy="button-delete-student"
                 startIcon={<DeleteIcon />}
                 sx={{
                   textTransform: 'none',
